@@ -13,7 +13,3 @@ class TestSignupPage(StaticLiveServerTestCase):
 
     def tearDown(self):
         self.browser.close()
-
-    def test_signup_page(self):
-        self.browser.get(self.live_server_url)
-        time.sleep(20)
