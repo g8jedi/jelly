@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.utils import timezone
 
-from .models import Employee
+from human_resources.models import Employee
 
 
 class EmployeeModelTests(TestCase):
