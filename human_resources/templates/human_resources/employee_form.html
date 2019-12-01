@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+{% block content %}
+	<form action="{% url 'human_resources:create-employee' %}" method="post">
+		{% csrf_token %}
+		{{ form.as_p }}
+		<input type="submit" value="Submit" />
+	</form>
+{% endblock %}

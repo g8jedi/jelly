@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
 
     # Internal Packages
-    'human_resources', 
+    'human_resources',
 ]
 
 MIDDLEWARE = [

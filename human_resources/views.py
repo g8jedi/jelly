@@ -1,3 +1,13 @@
 from django.shortcuts import render
+from django.views import generic
 
-# Create your views here.
+from .models import Employee
+from .forms import EmployeeForm
+
+
+class CreateEmployeeView(generic.edit.CreateView):
+    """
+    Create Employee Form
+    """
+    form_class = EmployeeForm
+    model = Employee
