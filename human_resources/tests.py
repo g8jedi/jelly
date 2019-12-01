@@ -1,6 +1,5 @@
-import datetime
-
 from django.test import TestCase
+from django.utils import timezone
 
 from .models import Employee
 
@@ -14,8 +13,8 @@ class EmployeeModelTests(TestCase):
         middle_name = "Haydee"
         surname = "Beato Batista"
         active = True
-        start_date = timezone.now() + datetime.timedelta(days=days)
-        identification =  "230573204823"
+        start_date = timezone.now()
+        identification = "230573204823"
         employee = Employee.objects.create(
             forename=forename, middle_name=middle_name, surname=surname,
             active=active, start_date=start_date, identification=identification
@@ -25,7 +24,7 @@ class EmployeeModelTests(TestCase):
         self.assertIs(employee.middle_name, middle_name)
         self.assertIs(employee.surname, surname)
         self.assertIs(employee.active, active)
-        self.assertIs(employee.start_date, start_date)
+        self.assertAlmostEquals(employee.start_date, start_date)
         self.assertIs(employee.identification, identification)
 
         #  2nd Iteration department, location, compesation: salary, hourly, etc...
