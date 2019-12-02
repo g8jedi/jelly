@@ -8,6 +8,6 @@ class Employee(models.Model):
     forename = models.CharField(max_length=25)
     middle_name = models.CharField(max_length=25, null=True)
     surname = models.CharField(max_length=50)
-    start_date = models.DateTimeField()
+    start_date = models.DateField()
     identification = models.CharField(max_length=50)
     active = models.BooleanField(default=True)
