@@ -9,9 +9,9 @@ class DateInput(DateInput):
 class EmployeeForm(ModelForm):
     class Meta:
         model = Employee
-        fields = ['forename', 'middle_name', 'surname', 'identification', 'start_date']
+        fields = ['forename', 'middle_name', 'surname', 'identification', 'hire_date']
         widgets = {
-            'start_date': DateInput,
+            'hire_date': DateInput,
         }
         labels = {
             'forename': ('First Name'),
