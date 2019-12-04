@@ -25,7 +25,7 @@ class EmployeeDetailViewTests(TestCase):
     def test_employee_detail_view_200(self):
         employee = Employee.objects.create(
             forename="Ana", middle_name="Mariela", surname="J", identification="341314", 
-            hire_date=datetime.today(), date_of_birth=datetime.today()
+            hire_date=datetime.today(), date_of_birth=datetime.today(), salary=10000
         )
 
         url = reverse('human_resources:employee-detail', args=(employee.id,))

@@ -20,7 +20,7 @@ class Employee(models.Model):
 
     # Personal Information
     forename = models.CharField(max_length=25)
-    middle_name = models.CharField(max_length=25, blank=True)
+    middle_name = models.CharField(max_length=25, blank=True, null=True)
     surname = models.CharField(max_length=50)
     identification = models.CharField(max_length=50)
     date_of_birth = models.DateField()
@@ -33,6 +33,7 @@ class Employee(models.Model):
 
     #  Job Related Information
     hire_date = models.DateField()
+    salary = models.DecimalField(max_digits=15, decimal_places=2, blank=True)
     active = models.BooleanField(default=True)
 
     def get_absolute_url(self):
