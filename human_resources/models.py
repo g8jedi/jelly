@@ -21,7 +21,7 @@ class Employee(models.Model):
 
     # Personal Information
     forename = models.CharField(max_length=25)
-    middle_name = models.CharField(max_length=25, blank=True, null=True)
+    middle_name = models.CharField(max_length=25, blank=True)
     surname = models.CharField(max_length=50)
     identification = models.CharField(max_length=50)
     date_of_birth = models.DateField()
@@ -39,3 +39,9 @@ class Employee(models.Model):
 
     def get_absolute_url(self):
         return reverse('human_resources:employee-detail', args=(self.id,))
+
+    def full_name(self):
+        if self.middle_name == "":
+            return self.forename + " " + self.surname
+        else:
+            return self.forename + " " + self.middle_name + " " + self.surname
