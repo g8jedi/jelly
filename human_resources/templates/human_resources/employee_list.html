@@ -1,0 +1,20 @@
+{% extends 'human_resources/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block breadcrumb %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="#">Human Resources</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Create Employee</li>
+  </ol>
+</nav>
+{% endblock %}
+{% block content %}
+	<ul>
+	{% for employee in object_list %}
+		 <li>{{ employee.last_name }}</li>
+	{% empty %}
+	     <li>No employees yet.</li>
+	{% endfor %}
+	</ul>
+{% endblock %}     

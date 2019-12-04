@@ -15,3 +15,7 @@ class CreateEmployeeView(generic.edit.CreateView):
 
 class EmployeeDetailView(generic.DetailView):
     model = Employee
+
+
+class EmployeeListView(generic.ListView):
+    model = Employee

@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 
 class Employee(models.Model):
@@ -37,4 +38,4 @@ class Employee(models.Model):
     active = models.BooleanField(default=True)
 
     def get_absolute_url(self):
-        return reverse('nomina:employee-detail', args=(self.id,))
+        return reverse('human_resources:employee-detail', args=(self.id,))

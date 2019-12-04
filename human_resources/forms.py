@@ -12,7 +12,7 @@ class EmployeeForm(ModelForm):
         fields = [
             'forename', 'middle_name', 'surname', 'date_of_birth',
             'nationality', 'identification', 'gender',
-            'email', 'phone_number', 'hire_date'
+            'email', 'phone_number', 'hire_date', 'salary',
         ]
         widgets = {
             'hire_date': DateInput,
@@ -27,6 +27,7 @@ class EmployeeForm(ModelForm):
             'identification': ('Identificacion'),
             'gender': ('Sexo'),
             'phone_number': ('Whatsapp'),
-            'hire_date': ('Fecha de contratación')
+            'hire_date': ('Fecha de contratación'),
+            'salary': ('Salario'),
 
         }
