@@ -11,7 +11,7 @@ class EmployeeFormViewTests(TestCase):
         response = self.client.get(url)
 
         # Test attribute descriptions appear
-        self.assertContains(response, "forename")
-        self.assertContains(response, "surname")
-        self.assertContains(response, "identification")
-        self.assertContains(response, "start_date")
+        self.assertContains(response, "Nombre")
+        self.assertContains(response, "Apellido")
+        self.assertContains(response, "Identificacion")
+        self.assertContains(response, "Sexo")
