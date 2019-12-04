@@ -34,3 +34,6 @@ class Employee(models.Model):
     #  Job Related Information
     hire_date = models.DateField()
     active = models.BooleanField(default=True)
+
+    def get_absolute_url(self):
+        return reverse('nomina:employee-detail', args=(self.id,))

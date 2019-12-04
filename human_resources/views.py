@@ -11,3 +11,7 @@ class CreateEmployeeView(generic.edit.CreateView):
     """
     form_class = EmployeeForm
     model = Employee
+
+
+class EmployeeDetailView(generic.DetailView):
+    model = Employee
