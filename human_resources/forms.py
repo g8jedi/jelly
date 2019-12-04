@@ -9,11 +9,24 @@ class DateInput(DateInput):
 class EmployeeForm(ModelForm):
     class Meta:
         model = Employee
-        fields = ['forename', 'middle_name', 'surname', 'identification', 'hire_date']
+        fields = [
+            'forename', 'middle_name', 'surname', 'date_of_birth',
+            'nationality', 'identification', 'gender',
+            'email', 'phone_number', 'hire_date'
+        ]
         widgets = {
             'hire_date': DateInput,
+            'date_of_birth': DateInput
         }
         labels = {
-            'forename': ('First Name'),
-            'surname': ('Last Name'),
+            'forename': ('Nombre'),
+            'middle_name': ('Segundo nombre'),
+            'surname': ('Apellidos'),
+            'date_of_birth': ('Fecha de nacimiento'),
+            'nationality': ('Nacionalidad'),
+            'identification': ('Identificacion'),
+            'gender': ('Sexo'),
+            'phone_number': ('Whatsapp'),
+            'hire_date': ('Fecha de contratación')
+
         }
