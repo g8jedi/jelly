@@ -20,7 +20,7 @@ class Employee(models.Model):
 
     # Personal Information
     forename = models.CharField(max_length=25)
-    middle_name = models.CharField(max_length=25, null=True)
+    middle_name = models.CharField(max_length=25, blank=True)
     surname = models.CharField(max_length=50)
     identification = models.CharField(max_length=50)
     date_of_birth = models.DateField()
