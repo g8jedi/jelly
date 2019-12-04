@@ -42,4 +42,29 @@ class EmployeeModelTests(TestCase):
         self.assertIs(employee.gender, gender)
         self.assertIs(employee.salary, salary)
 
-# 2nd Iteration department, location, compesation: salary, hourly, etc...
+    def test_employee_full_name_with_middle_name(self):
+        forename = "Gianna"
+        middle_name = "Y"
+        surname = "Beato Batista"
+        full_name = forename + " " + middle_name + " " + surname
+
+        employee = Employee.objects.create(
+            forename=forename, middle_name=middle_name, surname=surname,
+            hire_date=datetime.now(), date_of_birth=datetime.now(),
+            gender="FEMALE", salary=10000
+        )
+
+        self.assertEqual(employee.full_name(), full_name)
+
+    def test_employee_full_name_no_middle_name(self):
+        forename = "Gianna"
+        surname = "Beato Batista"
+        full_name = forename + " " + surname
+
+        employee = Employee.objects.create(
+            forename=forename, surname=surname,
+            hire_date=datetime.now(), date_of_birth=datetime.now(),
+            gender="FEMALE", salary=10000
+        )
+
+        self.assertEqual(employee.full_name(), full_name)
