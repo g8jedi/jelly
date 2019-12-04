@@ -31,3 +31,9 @@ class EmployeeDetailViewTests(TestCase):
         url = reverse('human_resources:employee-detail', args=(employee.id,))
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+
+
+class EmployeeListViewTests(TestCase):
+    def test_employee_list_view_200(self):
+        response = self.client.get(reverse('human_resources:employee-list'))
+        self.assertEqual(response.status_code, 200)
