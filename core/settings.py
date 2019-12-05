@@ -47,6 +47,7 @@ INSTALLED_APPS = [
 
     # Internal Packages
     'human_resources',
+    'nomina',
 ]
 
 MIDDLEWARE = [
