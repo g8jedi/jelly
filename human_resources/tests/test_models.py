@@ -22,11 +22,13 @@ class EmployeeModelTests(TestCase):
         nationality = "DOMINICAN"
         gender = "FEMALE"
         identification = "230573204823"
+        payment_method = "SALARIO"
         salary = 15000
         employee = Employee.objects.create(
             forename=forename, middle_name=middle_name, surname=surname, identification=identification,
             hire_date=hire_date, date_of_birth=date_of_birth, active=active, email=email,
-            phone_number=phone_number, nationality=nationality, gender=gender, salary=salary
+            payment_method=payment_method,phone_number=phone_number, nationality=nationality,
+            gender=gender, salary=salary
         )
 
         self.assertIs(employee.forename, forename)
@@ -41,6 +43,7 @@ class EmployeeModelTests(TestCase):
         self.assertIs(employee.phone_number, phone_number)
         self.assertIs(employee.gender, gender)
         self.assertIs(employee.salary, salary)
+        self.assertIs(employee.payment_method, payment_method)
 
     def test_employee_full_name_with_middle_name(self):
         forename = "Gianna"

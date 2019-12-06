@@ -14,6 +14,11 @@ class Employee(models.Model):
         ('VEN', 'VENEZUELAN'),
     ]
 
+    PAYMENT_METHOD_CHOICES = [
+	('SALARIO', 'SALARIO'),
+	('POR HORA', 'POR HORA'),
+	]
+
     GENDER_CHOICES = [
         ('MALE', 'MALE'),
         ('FEMALE', 'FEMALE'),
@@ -34,8 +39,10 @@ class Employee(models.Model):
 
     #  Job Related Information
     hire_date = models.DateField()
-    salary = models.DecimalField(max_digits=15, decimal_places=2, blank=True)
     active = models.BooleanField(default=True)
+    payment_method = models.CharField(max_length=8, choices=PAYMENT_METHOD_CHOICES, default='SALARIO')
+    salary = models.DecimalField(max_digits=15, decimal_places=2, blank=True, null=True)
+    hourly = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
 
     def get_absolute_url(self):
         return reverse('human_resources:employee-detail', args=(self.id,))
