@@ -181,3 +181,23 @@ class ComprobanteModelTest(TestCase):
         comprobante = Comprobante.objects.create(employee=employee)
 
         self.assertAlmostEqual(comprobante.netpay(), salary)
+
+    def test_comprobante_porhora_employee_net_pay_foreigner(self):
+        payment_method = "POR HORA"
+        hourly = 56
+        normal_hours = randint(60, 88)
+        extra_hours = randint(10, 88)
+        HORAS_EXTRAS_RATE = 1.35
+        subtotal = (hourly * HORAS_EXTRAS_RATE * extra_hours) + (hourly * normal_hours)
+        nationality = "AMERICAN"
+
+        employee = Employee.objects.create(
+            forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
+            hire_date=datetime.now(), date_of_birth=datetime.now(), gender="FEMALE",
+            hourly=hourly, payment_method=payment_method, nationality=nationality
+        )
+        comprobante = Comprobante.objects.create(
+            employee=employee, normal_hours=normal_hours, extra_hours=extra_hours
+        )
+
+        self.assertAlmostEqual(comprobante.netpay(), subtotal)
