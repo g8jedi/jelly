@@ -150,9 +150,10 @@ class ComprobanteModelTest(TestCase):
         SFS_tax = .0304
         AFP_tax = .0287
         hourly = 56
+        HORAS_EXTRAS_RATE = 1.35
         normal_hours = randint(60, 88)
         extra_hours = randint(10, 88)
-        subtotal = (hourly * 1.35 * extra_hours) + (hourly * normal_hours)
+        subtotal = (hourly * HORAS_EXTRAS_RATE * extra_hours) + (hourly * normal_hours)
         deductions = (SFS_tax + AFP_tax) * subtotal
         employee_netpay = subtotal - deductions
 

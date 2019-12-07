@@ -69,6 +69,7 @@ class Comprobante(models.Model):
     """
     employee = models.ForeignKey('Employee', null=True, on_delete=models.SET_NULL, related_name="employee")
 
+    # PAYROLL TAXES
     EMPLOYEE_TAX_SFS = .0304
     EMPLOYEE_TAX_ATP = .0287
     EMPLOYEE_TOTAL_TAXES = EMPLOYEE_TAX_SFS + EMPLOYEE_TAX_ATP
@@ -76,6 +77,10 @@ class Comprobante(models.Model):
     EMPLOYER_TAX_AFP = .0710
     EMPLOYER_TAX_SRL = .0110
     EMPLOYER_TOTAL_TAXES = EMPLOYER_TAX_AFP + EMPLOYER_TAX_SFS + EMPLOYER_TAX_SRL
+
+    # RULES
+    HORAS_EXTRAS_RATE = 1.35
+    HORAS_FERIADOS_RATE = 2.00
 
     normal_hours = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     extra_hours = models.DecimalField(max_digits=8, decimal_places=2, default=0)
@@ -85,7 +90,7 @@ class Comprobante(models.Model):
             deductions = self.employee.salary * self.EMPLOYEE_TOTAL_TAXES
             return self.employee.salary - deductions
         elif self.employee.payment_method == "POR HORA":
-            subtotal = self.normal_hours * self.employee.hourly
+            subtotal = (self.normal_hours * self.employee.hourly) + (self.extra_hours * self.HORAS_EXTRAS_RATE * self.employee.hourly)
             deductions = subtotal * self.EMPLOYEE_TOTAL_TAXES
             return subtotal - deductions
         else:
