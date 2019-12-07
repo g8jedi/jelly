@@ -62,6 +62,9 @@ class Employee(models.Model):
         else:
             return self.forename + " " + self.middle_name + " " + self.surname
 
+    def __str__(self):
+        return self.full_name()
+
 
 class Comprobante(models.Model):
     """
