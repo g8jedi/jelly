@@ -215,4 +215,4 @@ class ComprobanteModelTest(TestCase):
         )
         comprobante = Comprobante.objects.create(employee=employee)
 
-        self.assertAlmostEqual(comprobante.SFS_employee_deductions, SFS_employee_deductions)
+        self.assertAlmostEqual(comprobante.SFS_employee_deduction(), SFS_employee_deductions)

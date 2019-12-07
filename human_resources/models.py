@@ -76,10 +76,10 @@ class Comprobante(models.Model):
     EMPLOYEE_TAX_SFS = .0304
     EMPLOYEE_TAX_ATP = .0287
     EMPLOYEE_TOTAL_TAXES = EMPLOYEE_TAX_SFS + EMPLOYEE_TAX_ATP
-    EMPLOYER_TAX_SFS = .0709
-    EMPLOYER_TAX_AFP = .0710
-    EMPLOYER_TAX_SRL = .0110
-    EMPLOYER_TOTAL_TAXES = EMPLOYER_TAX_AFP + EMPLOYER_TAX_SFS + EMPLOYER_TAX_SRL
+    SFS_EMPLOYER_LIABILITY = .0709
+    AFP_EMPLOYER_LIABILITY = .0710
+    SRL_EMPLOYER_LIABILITY = .0110
+    TOTAL_EMPLOYER_LIABILITIES = SFS_EMPLOYER_LIABILITY + AFP_EMPLOYER_LIABILITY + SRL_EMPLOYER_LIABILITY
 
     # RULES
     HORAS_EXTRAS_RATE = 1.35
@@ -107,3 +107,9 @@ class Comprobante(models.Model):
                 return self.subtotal() - deductions
         else:
             return self.subtotal()
+
+    def SFS_employee_deduction(self):
+        if self.employee.nationality == "DOMINICAN":
+            return self.subtotal() * self.EMPLOYEE_TAX_SFS
+        else:
+            return "N/A"
