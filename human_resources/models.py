@@ -77,3 +77,5 @@ class Employee(models.Model):
         elif self.payment_method == "PER HOUR":
             subtotal = (hours_worked * self.hourly)
             return subtotal - self.employee_deductions(subtotal)
+        else:
+            return "ERROR"
