@@ -15,14 +15,24 @@ class Employee(models.Model):
     ]
 
     PAYMENT_METHOD_CHOICES = [
-	('SALARIO', 'SALARIO'),
-	('POR HORA', 'POR HORA'),
-	]
+        ('SALARIO', 'SALARIO'),
+        ('POR HORA', 'POR HORA'),
+    ]
 
     GENDER_CHOICES = [
         ('MALE', 'MALE'),
         ('FEMALE', 'FEMALE'),
     ]
+
+    employee_tax_SFS = .0304
+    employee_tax_ATP = .0287
+
+    def employee_deductions(self, subtotal):
+        """
+        Helper method to calculate total deductions of employee taxes.
+        """
+        return (self.employee_tax_ATP + self.employee_tax_SFS) * subtotal
+
 
     # Personal Information
     forename = models.CharField(max_length=25)
@@ -52,3 +62,18 @@ class Employee(models.Model):
             return self.forename + " " + self.surname
         else:
             return self.forename + " " + self.middle_name + " " + self.surname
+
+    def pay(self, hours_worked=88):
+        if self.payment_method == "SALARY":
+            return self.salary
+        elif self.payment_method == "PER HOUR":
+            return self.hourly * hours_worked
+        else:
+            return "ERROR"
+
+    def pay_after_taxes(self, hours_worked=88):
+        if self.payment_method == "SALARY":
+            return self.salary - self.employee_deductions(self.salary)
+        elif self.payment_method == "PER HOUR":
+            subtotal = (hours_worked * self.hourly)
+            return subtotal - self.employee_deductions(subtotal)

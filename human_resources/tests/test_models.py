@@ -71,3 +71,63 @@ class EmployeeModelTests(TestCase):
         )
 
         self.assertEqual(employee.full_name(), full_name)
+
+    def test_employee_pay_salary_method(self):
+        payment_method = "SALARY"
+        salary = 10000
+
+        employee = Employee.objects.create(
+            forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
+            hire_date=datetime.now(), date_of_birth=datetime.now(), gender="FEMALE",
+            salary=salary, payment_method=payment_method
+        )
+
+        self.assertIs(employee.pay(), salary)
+
+    def test_employee_pay_hourly_method(self):
+        payment_method = "PER HOUR"
+        hourly = 56
+        hours_worked = 44
+        estimated_pay = hourly * hours_worked
+
+        employee = Employee.objects.create(
+            forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
+            hire_date=datetime.now(), date_of_birth=datetime.now(), gender="FEMALE",
+            hourly=hourly, payment_method=payment_method
+        )
+
+        self.assertAlmostEqual(employee.pay(hours_worked=hours_worked), estimated_pay)
+
+    def test_pay_employee_salary_after_taxes(self):
+        payment_method = "SALARY"
+        salary = 10000
+        SFS_tax = .0304
+        AFP_tax = .0287
+        deductions = (SFS_tax + AFP_tax) * salary
+        pay_after_taxes = salary - deductions
+
+        employee = Employee.objects.create(
+            forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
+            hire_date=datetime.now(), date_of_birth=datetime.now(), gender="FEMALE",
+            salary=salary, payment_method=payment_method
+        )
+
+        self.assertAlmostEqual(employee.pay_after_taxes(), pay_after_taxes)
+
+    def test_pay_employee_hourly_after_taxes(self):
+        payment_method = "PER HOUR"
+        hours_worked = 88
+        hourly = 56
+        SFS_tax = .0304
+        AFP_tax = .0287
+        subtotal = (hourly * hours_worked)
+        deductions = (SFS_tax + AFP_tax) * subtotal
+        pay_after_taxes = subtotal - deductions
+
+        employee = Employee.objects.create(
+            forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
+            hire_date=datetime.now(), date_of_birth=datetime.now(), gender="FEMALE",
+            hourly=hourly, payment_method=payment_method
+        )
+
+        self.assertAlmostEqual(employee.pay_after_taxes(), pay_after_taxes)
