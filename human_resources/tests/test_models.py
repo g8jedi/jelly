@@ -110,7 +110,7 @@ class ComprobanteModelTest(TestCase):
         self.assertIs(comprobante.employee.salary, salary)
         self.assertIs(comprobante.employee.payment_method, payment_method)
 
-    def test_comprobante_salary_employee_net_pay(self):
+    def test_comprobante_salary_employee_netpay(self):
         payment_method = "SALARIO"
         SFS_tax = .0304
         AFP_tax = .0287
@@ -125,7 +125,7 @@ class ComprobanteModelTest(TestCase):
         )
         comprobante = Comprobante.objects.create(employee=employee)
 
-        self.assertAlmostEqual(comprobante.employee_netpay(), employee_netpay)
+        self.assertAlmostEqual(comprobante.netpay(), employee_netpay)
 
     def test_comprobante_perhour_employee_netpay_normal_hours(self):
         payment_method = "POR HORA"
@@ -143,7 +143,7 @@ class ComprobanteModelTest(TestCase):
         )
         comprobante = Comprobante.objects.create(employee=employee, normal_hours=normal_hours)
 
-        self.assertAlmostEqual(comprobante.employee_netpay(), employee_netpay)
+        self.assertAlmostEqual(comprobante.netpay(), employee_netpay)
 
     def test_comprobante_perhour_employee_netpay_with_extra_hours(self):
         payment_method = "POR HORA"
@@ -166,7 +166,7 @@ class ComprobanteModelTest(TestCase):
             employee=employee, normal_hours=normal_hours, extra_hours=extra_hours
         )
 
-        self.assertAlmostEqual(comprobante.employee_netpay(), employee_netpay)
+        self.assertAlmostEqual(comprobante.netpay(), employee_netpay)
 
     def test_comprobante_salary_employee_net_pay_foreigner(self):
         payment_method = "SALARIO"
@@ -180,4 +180,4 @@ class ComprobanteModelTest(TestCase):
         )
         comprobante = Comprobante.objects.create(employee=employee)
 
-        self.assertAlmostEqual(comprobante.employee_netpay(), salary)
+        self.assertAlmostEqual(comprobante.netpay(), salary)

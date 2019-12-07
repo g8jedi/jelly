@@ -9,9 +9,9 @@ class Employee(models.Model):
     """
 
     NATIONALITY_CHOICES = [
-        ('DO', 'DOMINICAN'),
-        ('USA', 'AMERICAN'),
-        ('VEN', 'VENEZUELAN'),
+        ('DOMINICAN', 'DOMINICAN'),
+        ('AMERICAN', 'AMERICAN'),
+        ('VENEZUELAN', 'VENEZUELAN'),
     ]
 
     PAYMENT_METHOD_CHOICES = [
@@ -39,7 +39,7 @@ class Employee(models.Model):
     surname = models.CharField(max_length=50)
     identification = models.CharField(max_length=50)
     date_of_birth = models.DateField()
-    nationality = models.CharField(max_length=3, choices=NATIONALITY_CHOICES, default='DO')
+    nationality = models.CharField(max_length=3, choices=NATIONALITY_CHOICES, default='DOMINICAN')
     gender = models.CharField(max_length=6, choices=GENDER_CHOICES)
 
     # Contact Information
@@ -86,13 +86,21 @@ class Comprobante(models.Model):
     normal_hours = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     extra_hours = models.DecimalField(max_digits=8, decimal_places=2, default=0)
 
-    def employee_netpay(self):
+    def subtotal(self):
         if self.employee.payment_method == "SALARIO":
-            deductions = self.employee.salary * self.EMPLOYEE_TOTAL_TAXES
-            return self.employee.salary - deductions
+            return self.employee.salary
         elif self.employee.payment_method == "POR HORA":
-            subtotal = (self.normal_hours * self.employee.hourly) + (self.extra_hours * self.HORAS_EXTRAS_RATE * self.employee.hourly)
-            deductions = subtotal * self.EMPLOYEE_TOTAL_TAXES
-            return subtotal - deductions
+            return (self.normal_hours * self.employee.hourly) + (self.extra_hours * self.HORAS_EXTRAS_RATE * self.employee.hourly)
         else:
             return "ERROR"
+
+    def netpay(self):
+        if self.employee.nationality == "DOMINICAN":
+            if self.employee.payment_method == "SALARIO":
+                deductions = self.employee.salary * self.EMPLOYEE_TOTAL_TAXES
+                return self.employee.salary - deductions
+            elif self.employee.payment_method == "POR HORA":
+                deductions = self.subtotal() * self.EMPLOYEE_TOTAL_TAXES
+                return self.subtotal() - deductions
+        else:
+            return self.subtotal()
