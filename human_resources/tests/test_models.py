@@ -167,3 +167,17 @@ class ComprobanteModelTest(TestCase):
         )
 
         self.assertAlmostEqual(comprobante.employee_netpay(), employee_netpay)
+
+    def test_comprobante_salary_employee_net_pay_foreigner(self):
+        payment_method = "SALARIO"
+        salary = 15000
+        nationality = "AMERICAN"
+
+        employee = Employee.objects.create(
+            forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
+            hire_date=datetime.now(), date_of_birth=datetime.now(), gender="FEMALE",
+            salary=salary, payment_method=payment_method, nationality=nationality
+        )
+        comprobante = Comprobante.objects.create(employee=employee)
+
+        self.assertAlmostEqual(comprobante.employee_netpay(), salary)
