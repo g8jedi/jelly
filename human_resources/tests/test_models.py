@@ -1,4 +1,5 @@
 from datetime import datetime
+from random import randint
 
 from django.test import TestCase
 from django.utils import timezone
@@ -126,20 +127,42 @@ class ComprobanteModelTest(TestCase):
 
         self.assertAlmostEqual(comprobante.employee_netpay(), employee_netpay)
 
-    def test_comprobante_perhour_employee_net_pay(self):
+    def test_comprobante_perhour_employee_netpay_normal_hours(self):
         payment_method = "POR HORA"
         SFS_tax = .0304
         AFP_tax = .0287
         hourly = 56
-        hours_worked = 88
-        deductions = (SFS_tax + AFP_tax) * (hourly * hours_worked)
-        employee_netpay = (hourly * hours_worked) - deductions
+        normal_hours = randint(10, 88)
+        deductions = (SFS_tax + AFP_tax) * (hourly * normal_hours)
+        employee_netpay = (hourly * normal_hours) - deductions
 
         employee = Employee.objects.create(
             forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
             hire_date=datetime.now(), date_of_birth=datetime.now(), gender="FEMALE",
             hourly=hourly, payment_method=payment_method
         )
-        comprobante = Comprobante.objects.create(employee=employee)
+        comprobante = Comprobante.objects.create(employee=employee, normal_hours=normal_hours)
+
+        self.assertAlmostEqual(comprobante.employee_netpay(), employee_netpay)
+
+    def test_comprobante_perhour_employee_netpay_with_extra_hours(self):
+        payment_method = "POR HORA"
+        SFS_tax = .0304
+        AFP_tax = .0287
+        hourly = 56
+        normal_hours = randint(60, 88)
+        extra_hours = randint(10, 88)
+        subtotal = (hourly * 1.35 * extra_hours) + (hourly * normal_hours)
+        deductions = (SFS_tax + AFP_tax) * subtotal
+        employee_netpay = subtotal - deductions
+
+        employee = Employee.objects.create(
+            forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
+            hire_date=datetime.now(), date_of_birth=datetime.now(), gender="FEMALE",
+            hourly=hourly, payment_method=payment_method
+        )
+        comprobante = Comprobante.objects.create(
+            employee=employee, normal_hours=normal_hours, extra_hours=extra_hours
+        )
 
         self.assertAlmostEqual(comprobante.employee_netpay(), employee_netpay)

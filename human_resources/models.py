@@ -72,13 +72,21 @@ class Comprobante(models.Model):
     EMPLOYEE_TAX_SFS = .0304
     EMPLOYEE_TAX_ATP = .0287
     EMPLOYEE_TOTAL_TAXES = EMPLOYEE_TAX_SFS + EMPLOYEE_TAX_ATP
-    hours_worked = models.DecimalField(max_digits=8, decimal_places=2, default=88)
+    EMPLOYER_TAX_SFS = .0709
+    EMPLOYER_TAX_AFP = .0710
+    EMPLOYER_TAX_SRL = .0110
+    EMPLOYER_TOTAL_TAXES = EMPLOYER_TAX_AFP + EMPLOYER_TAX_SFS + EMPLOYER_TAX_SRL
+
+    normal_hours = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    extra_hours = models.DecimalField(max_digits=8, decimal_places=2, default=0)
 
     def employee_netpay(self):
         if self.employee.payment_method == "SALARIO":
             deductions = self.employee.salary * self.EMPLOYEE_TOTAL_TAXES
             return self.employee.salary - deductions
         elif self.employee.payment_method == "POR HORA":
-            subtotal = self.hours_worked * self.employee.hourly
+            subtotal = self.normal_hours * self.employee.hourly
             deductions = subtotal * self.EMPLOYEE_TOTAL_TAXES
             return subtotal - deductions
+        else:
+            return "ERROR"
