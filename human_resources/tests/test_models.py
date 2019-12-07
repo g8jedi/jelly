@@ -3,7 +3,7 @@ from datetime import datetime
 from django.test import TestCase
 from django.utils import timezone
 
-from human_resources.models import Employee
+from human_resources.models import Employee, Comprobante
 
 
 class EmployeeModelTests(TestCase):
@@ -131,3 +131,40 @@ class EmployeeModelTests(TestCase):
         )
 
         self.assertAlmostEqual(employee.pay_after_taxes(), pay_after_taxes)
+
+
+class ComprobanteModelTest(TestCase):
+    def test_comprobante_creation(self):
+        forename = "Gianna"
+        middle_name = "Haydee"
+        surname = "Beato Batista"
+        hire_date = datetime.now()
+        active = True
+        date_of_birth = datetime.now()
+        email = "jairo@tacomoe.com"
+        phone_number = "8097553433"
+        nationality = "DOMINICAN"
+        gender = "FEMALE"
+        identification = "230573204823"
+        payment_method = "SALARIO"
+        salary = 15000
+        employee = Employee.objects.create(
+            forename=forename, middle_name=middle_name, surname=surname, identification=identification,
+            hire_date=hire_date, date_of_birth=date_of_birth, active=active, email=email,
+            payment_method=payment_method, phone_number=phone_number, nationality=nationality,
+            gender=gender, salary=salary
+        )
+
+        comprobante = Comprobante.objects.create(employee=employee)
+
+        self.assertIs(comprobante.employee.forename, forename)
+        self.assertIs(comprobante.employee.middle_name, middle_name)
+        self.assertIs(comprobante.employee.surname, surname)
+        self.assertIs(comprobante.employee.identification, identification)
+        self.assertIs(comprobante.employee.date_of_birth, date_of_birth)
+        self.assertIs(comprobante.employee.nationality, nationality)
+        self.assertIs(comprobante.employee.email, email)
+        self.assertIs(comprobante.employee.phone_number, phone_number)
+        self.assertIs(comprobante.employee.gender, gender)
+        self.assertIs(comprobante.employee.salary, salary)
+        self.assertIs(comprobante.employee.payment_method, payment_method)

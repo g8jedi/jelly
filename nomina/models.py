@@ -1,4 +1,5 @@
 from django.db import models
+from human_resources.models import Employee
 
 
 class Impuesto(models.Model):

@@ -79,3 +79,10 @@ class Employee(models.Model):
             return subtotal - self.employee_deductions(subtotal)
         else:
             return "ERROR"
+
+
+class Comprobante(models.Model):
+    """
+    This model represents a paystub
+    """
+    employee = models.ForeignKey('Employee', null=True, on_delete=models.SET_NULL, related_name="employee")
