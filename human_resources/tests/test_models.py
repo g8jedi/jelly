@@ -201,3 +201,18 @@ class ComprobanteModelTest(TestCase):
         )
 
         self.assertAlmostEqual(comprobante.netpay(), subtotal)
+
+    def test_comprobante_SFS_employee_deductions(self):
+        payment_method = "SALARIO"
+        salary = 15000
+        SFS_tax_rate = .0304
+        SFS_employee_deductions = salary * SFS_tax_rate
+
+        employee = Employee.objects.create(
+            forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
+            hire_date=datetime.now(), date_of_birth=datetime.now(), gender="FEMALE",
+            salary=salary, payment_method=payment_method
+        )
+        comprobante = Comprobante.objects.create(employee=employee)
+
+        self.assertAlmostEqual(comprobante.SFS_employee_deductions, SFS_employee_deductions)
