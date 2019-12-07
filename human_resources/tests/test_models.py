@@ -27,7 +27,7 @@ class EmployeeModelTests(TestCase):
         employee = Employee.objects.create(
             forename=forename, middle_name=middle_name, surname=surname, identification=identification,
             hire_date=hire_date, date_of_birth=date_of_birth, active=active, email=email,
-            payment_method=payment_method,phone_number=phone_number, nationality=nationality,
+            payment_method=payment_method, phone_number=phone_number, nationality=nationality,
             gender=gender, salary=salary
         )
 
@@ -72,66 +72,6 @@ class EmployeeModelTests(TestCase):
 
         self.assertEqual(employee.full_name(), full_name)
 
-    def test_employee_pay_salary_method(self):
-        payment_method = "SALARY"
-        salary = 10000
-
-        employee = Employee.objects.create(
-            forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
-            hire_date=datetime.now(), date_of_birth=datetime.now(), gender="FEMALE",
-            salary=salary, payment_method=payment_method
-        )
-
-        self.assertIs(employee.pay(), salary)
-
-    def test_employee_pay_hourly_method(self):
-        payment_method = "PER HOUR"
-        hourly = 56
-        hours_worked = 44
-        estimated_pay = hourly * hours_worked
-
-        employee = Employee.objects.create(
-            forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
-            hire_date=datetime.now(), date_of_birth=datetime.now(), gender="FEMALE",
-            hourly=hourly, payment_method=payment_method
-        )
-
-        self.assertAlmostEqual(employee.pay(hours_worked=hours_worked), estimated_pay)
-
-    def test_pay_employee_salary_after_taxes(self):
-        payment_method = "SALARY"
-        salary = 10000
-        SFS_tax = .0304
-        AFP_tax = .0287
-        deductions = (SFS_tax + AFP_tax) * salary
-        pay_after_taxes = salary - deductions
-
-        employee = Employee.objects.create(
-            forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
-            hire_date=datetime.now(), date_of_birth=datetime.now(), gender="FEMALE",
-            salary=salary, payment_method=payment_method
-        )
-
-        self.assertAlmostEqual(employee.pay_after_taxes(), pay_after_taxes)
-
-    def test_pay_employee_hourly_after_taxes(self):
-        payment_method = "PER HOUR"
-        hours_worked = 88
-        hourly = 56
-        SFS_tax = .0304
-        AFP_tax = .0287
-        subtotal = (hourly * hours_worked)
-        deductions = (SFS_tax + AFP_tax) * subtotal
-        pay_after_taxes = subtotal - deductions
-
-        employee = Employee.objects.create(
-            forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
-            hire_date=datetime.now(), date_of_birth=datetime.now(), gender="FEMALE",
-            hourly=hourly, payment_method=payment_method
-        )
-
-        self.assertAlmostEqual(employee.pay_after_taxes(), pay_after_taxes)
-
 
 class ComprobanteModelTest(TestCase):
     def test_comprobante_creation(self):
@@ -168,3 +108,38 @@ class ComprobanteModelTest(TestCase):
         self.assertIs(comprobante.employee.gender, gender)
         self.assertIs(comprobante.employee.salary, salary)
         self.assertIs(comprobante.employee.payment_method, payment_method)
+
+    def test_comprobante_salary_employee_net_pay(self):
+        payment_method = "SALARIO"
+        SFS_tax = .0304
+        AFP_tax = .0287
+        salary = 15000
+        deductions = (SFS_tax + AFP_tax) * salary
+        employee_netpay = salary - deductions
+
+        employee = Employee.objects.create(
+            forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
+            hire_date=datetime.now(), date_of_birth=datetime.now(), gender="FEMALE",
+            salary=salary, payment_method=payment_method
+        )
+        comprobante = Comprobante.objects.create(employee=employee)
+
+        self.assertAlmostEqual(comprobante.employee_netpay(), employee_netpay)
+
+    def test_comprobante_perhour_employee_net_pay(self):
+        payment_method = "POR HORA"
+        SFS_tax = .0304
+        AFP_tax = .0287
+        hourly = 56
+        hours_worked = 88
+        deductions = (SFS_tax + AFP_tax) * (hourly * hours_worked)
+        employee_netpay = (hourly * hours_worked) - deductions
+
+        employee = Employee.objects.create(
+            forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
+            hire_date=datetime.now(), date_of_birth=datetime.now(), gender="FEMALE",
+            hourly=hourly, payment_method=payment_method
+        )
+        comprobante = Comprobante.objects.create(employee=employee)
+
+        self.assertAlmostEqual(comprobante.employee_netpay(), employee_netpay)

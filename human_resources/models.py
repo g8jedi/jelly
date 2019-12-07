@@ -33,7 +33,6 @@ class Employee(models.Model):
         """
         return (self.employee_tax_ATP + self.employee_tax_SFS) * subtotal
 
-
     # Personal Information
     forename = models.CharField(max_length=25)
     middle_name = models.CharField(max_length=25, blank=True)
@@ -63,26 +62,23 @@ class Employee(models.Model):
         else:
             return self.forename + " " + self.middle_name + " " + self.surname
 
-    def pay(self, hours_worked=88):
-        if self.payment_method == "SALARY":
-            return self.salary
-        elif self.payment_method == "PER HOUR":
-            return self.hourly * hours_worked
-        else:
-            return "ERROR"
-
-    def pay_after_taxes(self, hours_worked=88):
-        if self.payment_method == "SALARY":
-            return self.salary - self.employee_deductions(self.salary)
-        elif self.payment_method == "PER HOUR":
-            subtotal = (hours_worked * self.hourly)
-            return subtotal - self.employee_deductions(subtotal)
-        else:
-            return "ERROR"
-
 
 class Comprobante(models.Model):
     """
     This model represents a paystub
     """
     employee = models.ForeignKey('Employee', null=True, on_delete=models.SET_NULL, related_name="employee")
+
+    EMPLOYEE_TAX_SFS = .0304
+    EMPLOYEE_TAX_ATP = .0287
+    EMPLOYEE_TOTAL_TAXES = EMPLOYEE_TAX_SFS + EMPLOYEE_TAX_ATP
+    hours_worked = models.DecimalField(max_digits=8, decimal_places=2, default=88)
+
+    def employee_netpay(self):
+        if self.employee.payment_method == "SALARIO":
+            deductions = self.employee.salary * self.EMPLOYEE_TOTAL_TAXES
+            return self.employee.salary - deductions
+        elif self.employee.payment_method == "POR HORA":
+            subtotal = self.hours_worked * self.employee.hourly
+            deductions = subtotal * self.EMPLOYEE_TOTAL_TAXES
+            return subtotal - deductions
