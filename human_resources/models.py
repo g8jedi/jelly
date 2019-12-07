@@ -81,6 +81,7 @@ class Comprobante(models.Model):
     # RULES
     HORAS_EXTRAS_RATE = 1.35
     HORAS_FERIADOS_RATE = 2.00
+    SALARY_TO_DAILY_DIV = 23.83
 
     normal_hours = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     extra_hours = models.DecimalField(max_digits=8, decimal_places=2, default=0)
