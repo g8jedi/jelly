@@ -39,7 +39,7 @@ class Employee(models.Model):
     surname = models.CharField(max_length=50)
     identification = models.CharField(max_length=50)
     date_of_birth = models.DateField()
-    nationality = models.CharField(max_length=3, choices=NATIONALITY_CHOICES, default='DOMINICAN')
+    nationality = models.CharField(max_length=10, choices=NATIONALITY_CHOICES, default='DOMINICAN')
     gender = models.CharField(max_length=6, choices=GENDER_CHOICES)
 
     # Contact Information
@@ -79,7 +79,8 @@ class Comprobante(models.Model):
     SFS_EMPLOYER_LIABILITY = .0709
     AFP_EMPLOYER_LIABILITY = .0710
     SRL_EMPLOYER_LIABILITY = .0110
-    TOTAL_EMPLOYER_LIABILITIES = SFS_EMPLOYER_LIABILITY + AFP_EMPLOYER_LIABILITY + SRL_EMPLOYER_LIABILITY
+    INFOTEP_EMPLOYER_LIABILITY = .01
+    TOTAL_EMPLOYER_LIABILITIES = SFS_EMPLOYER_LIABILITY + AFP_EMPLOYER_LIABILITY + SRL_EMPLOYER_LIABILITY + INFOTEP_EMPLOYER_LIABILITY
 
     # RULES
     HORAS_EXTRAS_RATE = 1.35
