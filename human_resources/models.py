@@ -25,13 +25,13 @@ class Employee(models.Model):
     ]
 
     employee_tax_SFS = .0304
-    employee_tax_ATP = .0287
+    employee_tax_AFP = .0287
 
     def employee_deductions(self, subtotal):
         """
         Helper method to calculate total deductions of employee taxes.
         """
-        return (self.employee_tax_ATP + self.employee_tax_SFS) * subtotal
+        return (self.employee_tax_AFP + self.employee_tax_SFS) * subtotal
 
     # Personal Information
     forename = models.CharField(max_length=25)
@@ -74,8 +74,8 @@ class Comprobante(models.Model):
 
     # PAYROLL TAXES
     EMPLOYEE_TAX_SFS = .0304
-    EMPLOYEE_TAX_ATP = .0287
-    EMPLOYEE_TOTAL_TAXES = EMPLOYEE_TAX_SFS + EMPLOYEE_TAX_ATP
+    EMPLOYEE_TAX_AFP = .0287
+    EMPLOYEE_TOTAL_TAXES = EMPLOYEE_TAX_SFS + EMPLOYEE_TAX_AFP
     SFS_EMPLOYER_LIABILITY = .0709
     AFP_EMPLOYER_LIABILITY = .0710
     SRL_EMPLOYER_LIABILITY = .0110
@@ -112,5 +112,11 @@ class Comprobante(models.Model):
     def SFS_employee_deduction(self):
         if self.employee.nationality == "DOMINICAN":
             return self.subtotal() * self.EMPLOYEE_TAX_SFS
+        else:
+            return "N/A"
+
+    def AFP_employee_deduction(self):
+        if self.employee.nationality == "DOMINICAN":
+            return self.subtotal() * self.EMPLOYEE_TAX_AFP
         else:
             return "N/A"

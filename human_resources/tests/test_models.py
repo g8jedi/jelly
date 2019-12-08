@@ -217,7 +217,7 @@ class ComprobanteModelTest(TestCase):
 
         self.assertAlmostEqual(comprobante.SFS_employee_deduction(), SFS_employee_deductions)
 
-    def test_comprobante_AFP_employee_deductions(self):
+    def test_comprobante_ATP_employee_deductions(self):
         payment_method = "SALARIO"
         salary = 15000
         AFP_tax_rate = .0287
