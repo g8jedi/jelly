@@ -216,3 +216,18 @@ class ComprobanteModelTest(TestCase):
         comprobante = Comprobante.objects.create(employee=employee)
 
         self.assertAlmostEqual(comprobante.SFS_employee_deduction(), SFS_employee_deductions)
+
+    def test_comprobante_AFP_employee_deductions(self):
+        payment_method = "SALARIO"
+        salary = 15000
+        AFP_tax_rate = .0287
+        AFP_employee_deductions = salary * AFP_tax_rate
+
+        employee = Employee.objects.create(
+            forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
+            hire_date=datetime.now(), date_of_birth=datetime.now(), gender="FEMALE",
+            salary=salary, payment_method=payment_method
+        )
+        comprobante = Comprobante.objects.create(employee=employee)
+
+        self.assertAlmostEqual(comprobante.AFP_employee_deduction(), AFP_employee_deductions)
