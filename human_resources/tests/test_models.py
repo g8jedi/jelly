@@ -202,7 +202,7 @@ class ComprobanteModelTest(TestCase):
 
         self.assertAlmostEqual(comprobante.netpay(), subtotal)
 
-    def test_comprobante_SFS_employee_deductions(self):
+    def test_comprobante_SFS_employee_deductions_salary(self):
         payment_method = "SALARIO"
         salary = 15000
         SFS_tax_rate = .0304
@@ -217,7 +217,7 @@ class ComprobanteModelTest(TestCase):
 
         self.assertAlmostEqual(comprobante.SFS_employee_deduction(), SFS_employee_deductions)
 
-    def test_comprobante_AFP_employee_deductions(self):
+    def test_comprobante_AFP_employee_deductions_salary(self):
         payment_method = "SALARIO"
         salary = 15000
         AFP_tax_rate = .0287
@@ -231,3 +231,29 @@ class ComprobanteModelTest(TestCase):
         comprobante = Comprobante.objects.create(employee=employee)
 
         self.assertAlmostEqual(comprobante.AFP_employee_deduction(), AFP_employee_deductions)
+
+    def test_comprobante_perhour_employee_deductions_with_extra_hours(self):
+        payment_method = "POR HORA"
+        SFS_tax = .0304
+        AFP_tax = .0287
+        hourly = 56
+        HORAS_EXTRAS_RATE = 1.35
+        normal_hours = randint(60, 88)
+        extra_hours = randint(10, 88)
+        subtotal = (hourly * HORAS_EXTRAS_RATE * extra_hours) + (hourly * normal_hours)
+        deductions = (SFS_tax + AFP_tax) * (hourly * normal_hours)
+        employee_netpay = subtotal - deductions
+
+        employee = Employee.objects.create(
+            forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
+            hire_date=datetime.now(), date_of_birth=datetime.now(), gender="FEMALE",
+            hourly=hourly, payment_method=payment_method
+        )
+        comprobante = Comprobante.objects.create(
+            employee=employee, normal_hours=normal_hours, extra_hours=extra_hours
+        )
+
+        self.assertAlmostEqual(
+            (comprobante.AFP_employee_deduction() + comprobante.AFP_employee_deduction()),
+            deductions
+        )
