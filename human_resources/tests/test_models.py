@@ -154,7 +154,7 @@ class ComprobanteModelTest(TestCase):
         normal_hours = randint(60, 88)
         extra_hours = randint(10, 88)
         subtotal = (hourly * HORAS_EXTRAS_RATE * extra_hours) + (hourly * normal_hours)
-        deductions = (SFS_tax + AFP_tax) * subtotal
+        deductions = (SFS_tax + AFP_tax) * (hourly * normal_hours)
         employee_netpay = subtotal - deductions
 
         employee = Employee.objects.create(
@@ -217,7 +217,7 @@ class ComprobanteModelTest(TestCase):
 
         self.assertAlmostEqual(comprobante.SFS_employee_deduction(), SFS_employee_deductions)
 
-    def test_comprobante_ATP_employee_deductions(self):
+    def test_comprobante_AFP_employee_deductions(self):
         payment_method = "SALARIO"
         salary = 15000
         AFP_tax_rate = .0287
