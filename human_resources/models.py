@@ -104,7 +104,7 @@ class Comprobante(models.Model):
                 deductions = self.employee.salary * self.EMPLOYEE_TOTAL_TAXES
                 return self.employee.salary - deductions
             elif self.employee.payment_method == "POR HORA":
-                deductions = self.subtotal() * self.EMPLOYEE_TOTAL_TAXES
+                deductions = self.employee.hourly * self.normal_hours * self.EMPLOYEE_TOTAL_TAXES
                 return self.subtotal() - deductions
         else:
             return self.subtotal()
