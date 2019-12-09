@@ -356,3 +356,38 @@ class ComprobanteModelTest(TestCase):
         comprobante = Comprobante.objects.create(employee=employee)
 
         self.assertAlmostEqual(comprobante.SFS_employer_liability(), SFS_employer_cost)
+
+    def test_comprobante_INFOTEP_employer_liability_salary(self):
+        payment_method = "SALARIO"
+        salary = randint(10000, 18000)
+        INFOTEP_EMPLOYER_LIABILITY = .01
+        INFOTEP_employer_cost = salary * INFOTEP_EMPLOYER_LIABILITY
+
+        employee = Employee.objects.create(
+            forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
+            hire_date=datetime.now(), date_of_birth=datetime.now(), gender="FEMALE",
+            salary=salary, payment_method=payment_method
+        )
+        comprobante = Comprobante.objects.create(employee=employee)
+
+        self.assertAlmostEqual(comprobante.INFOTEP_employer_liability(), INFOTEP_employer_cost)
+
+    def test_comprobante_employer_liabilities_hourly(self):
+        payment_method = "POR HORA"
+        hourly = randint(56, 110)
+        normal_hours = randint(56, 88)
+        taxable_amount = hourly * normal_hours
+        SFS_EMPLOYER_LIABILITY = .0709
+        AFP_EMPLOYER_LIABILITY = .0710
+        SRL_EMPLOYER_LIABILITY = .0110
+        INFOTEP_EMPLOYER_LIABILITY = .01
+        employer_cost = taxable_amount * (SFS_EMPLOYER_LIABILITY + AFP_EMPLOYER_LIABILITY + SRL_EMPLOYER_LIABILITY + INFOTEP_EMPLOYER_LIABILITY)
+
+        employee = Employee.objects.create(
+            forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
+            hire_date=datetime.now(), date_of_birth=datetime.now(), gender="FEMALE",
+            hourly=hourly, payment_method=payment_method
+        )
+        comprobante = Comprobante.objects.create(employee=employee, normal_hours=normal_hours)
+
+        self.assertAlmostEqual(comprobante.total_employer_liabilities(), employer_cost)

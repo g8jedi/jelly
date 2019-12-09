@@ -24,15 +24,6 @@ class Employee(models.Model):
         ('FEMALE', 'FEMALE'),
     ]
 
-    employee_tax_SFS = .0304
-    employee_tax_AFP = .0287
-
-    def employee_deductions(self, subtotal):
-        """
-        Helper method to calculate total deductions of employee taxes.
-        """
-        return (self.employee_tax_AFP + self.employee_tax_SFS) * subtotal
-
     # Personal Information
     forename = models.CharField(max_length=25)
     middle_name = models.CharField(max_length=25, blank=True)
@@ -161,5 +152,17 @@ class Comprobante(models.Model):
     def SFS_employer_liability(self):
         if self.employee.nationality == "DOMINICAN":
             return self.taxable_income() * self.SFS_EMPLOYER_LIABILITY
+        else:
+            return "N/A"
+
+    def INFOTEP_employer_liability(self):
+        if self.employee.nationality == "DOMINICAN":
+            return self.taxable_income() * self.INFOTEP_EMPLOYER_LIABILITY
+        else:
+            return "N/A"
+
+    def total_employer_liabilities(self):
+        if self.employee.nationality == "DOMINICAN":
+            return self.taxable_income() * self.TOTAL_EMPLOYER_LIABILITIES
         else:
             return "N/A"
