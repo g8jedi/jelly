@@ -257,3 +257,21 @@ class ComprobanteModelTest(TestCase):
             (comprobante.AFP_employee_deduction() + comprobante.SFS_employee_deduction()),
             deductions
         )
+
+    def test_comprobante_salary_employee_with_hours_extra(self):
+        payment_method = "SALARIO"
+        salary = 18000
+        HORAS_EXTRAS_RATE = 1.35
+        SALARY_TO_DAILY_DIV = 23.83
+        extra_hours = randint(10, 88)
+        extra_pay = (salary / SALARY_TO_DAILY_DIV / 8) * extra_hours
+        subtotal = extra_pay + salary
+
+        employee = Employee.objects.create(
+            forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
+            hire_date=datetime.now(), date_of_birth=datetime.now(), gender="FEMALE",
+            salary=salary, payment_method=payment_method
+        )
+        comprobante = Comprobante.objects.create(employee=employee, extra_hours=extra_hours)
+
+        self.assertAlmostEqual(comprobante.subtotal(), subtotal)
