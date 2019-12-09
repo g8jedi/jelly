@@ -92,7 +92,8 @@ class Comprobante(models.Model):
 
     def subtotal(self):
         if self.employee.payment_method == "SALARIO":
-            return self.employee.salary  # Pending Horas Extras
+            extra_pay = (self.employee.salary / self.SALARY_TO_DAILY_DIV / 8) * self.extra_hours
+            return self.employee.salary + extra_pay
         elif self.employee.payment_method == "POR HORA":
             return (self.normal_hours * self.employee.hourly) + (self.extra_hours * self.HORAS_EXTRAS_RATE * self.employee.hourly)
         else:
