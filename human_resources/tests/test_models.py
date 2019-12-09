@@ -275,3 +275,21 @@ class ComprobanteModelTest(TestCase):
         comprobante = Comprobante.objects.create(employee=employee, extra_hours=extra_hours)
 
         self.assertAlmostEqual(comprobante.subtotal(), subtotal)
+
+    def test_comprobante_salary_feriado_hours(self):
+        payment_method = "SALARIO"
+        salary = randint(10000, 24000)
+        HORAS_FERIADOS_RATE = 2.00
+        SALARY_TO_DAILY_DIV = 23.83
+        feriado_hours = randint(1, 25)
+        feriado_pay = (salary / SALARY_TO_DAILY_DIV / 8) * feriado_hours * HORAS_FERIADOS_RATE
+        subtotal = feriado_pay + salary
+
+        employee = Employee.objects.create(
+            forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
+            hire_date=datetime.now(), date_of_birth=datetime.now(), gender="FEMALE",
+            salary=salary, payment_method=payment_method
+        )
+        comprobante = Comprobante.objects.create(employee=employee, feriado_hours=feriado_hours)
+
+        self.assertAlmostEqual(comprobante.subtotal(), subtotal)

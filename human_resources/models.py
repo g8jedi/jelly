@@ -89,11 +89,19 @@ class Comprobante(models.Model):
 
     normal_hours = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     extra_hours = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    feriado_hours = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+
+    def salary_to_hourly(self):
+        if self.employee.payment_method == "SALARIO":
+            return (self.employee.salary / self.SALARY_TO_DAILY_DIV / 8)
+        else:
+            return "ERROR: EMPLOYEE NOT SALARY EMPLOYEE"
 
     def subtotal(self):
         if self.employee.payment_method == "SALARIO":
-            extra_pay = (self.employee.salary / self.SALARY_TO_DAILY_DIV / 8) * self.extra_hours * self.HORAS_EXTRAS_RATE
-            return self.employee.salary + extra_pay
+            extra_pay = self.salary_to_hourly() * self.extra_hours * self.HORAS_EXTRAS_RATE
+            feriado_pay = self.salary_to_hourly() * self.feriado_hours * self.HORAS_FERIADOS_RATE
+            return self.employee.salary + extra_pay + feriado_pay
         elif self.employee.payment_method == "POR HORA":
             extra_pay = self.extra_hours * self.HORAS_EXTRAS_RATE * self.employee.hourly
             return (self.normal_hours * self.employee.hourly) + extra_pay
