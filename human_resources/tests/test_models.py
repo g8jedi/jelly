@@ -326,7 +326,7 @@ class ComprobanteModelTest(TestCase):
         comprobante = Comprobante.objects.create(employee=employee)
 
         self.assertAlmostEqual(comprobante.SRL_employer_liability(), SRL_employer_cost)
-        
+
     def test_comprobante_AFP_employer_liability_salary(self):
         payment_method = "SALARIO"
         salary = randint(10000, 18000)
@@ -341,3 +341,18 @@ class ComprobanteModelTest(TestCase):
         comprobante = Comprobante.objects.create(employee=employee)
 
         self.assertAlmostEqual(comprobante.AFP_employer_liability(), AFP_employer_cost)
+
+    def test_comprobante_SFS_employer_liability_salary(self):
+        payment_method = "SALARIO"
+        salary = randint(10000, 18000)
+        SFS_EMPLOYER_LIABILITY = .0709
+        SFS_employer_cost = salary * SFS_EMPLOYER_LIABILITY
+
+        employee = Employee.objects.create(
+            forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
+            hire_date=datetime.now(), date_of_birth=datetime.now(), gender="FEMALE",
+            salary=salary, payment_method=payment_method
+        )
+        comprobante = Comprobante.objects.create(employee=employee)
+
+        self.assertAlmostEqual(comprobante.SFS_employer_liability(), SFS_employer_cost)

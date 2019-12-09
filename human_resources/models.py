@@ -157,3 +157,9 @@ class Comprobante(models.Model):
             return self.taxable_income() * self.AFP_EMPLOYER_LIABILITY
         else:
             return "N/A"
+
+    def SFS_employer_liability(self):
+        if self.employee.nationality == "DOMINICAN":
+            return self.taxable_income() * self.SFS_EMPLOYER_LIABILITY
+        else:
+            return "N/A"
