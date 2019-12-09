@@ -104,7 +104,8 @@ class Comprobante(models.Model):
             return self.employee.salary + extra_pay + feriado_pay
         elif self.employee.payment_method == "POR HORA":
             extra_pay = self.extra_hours * self.HORAS_EXTRAS_RATE * self.employee.hourly
-            return (self.normal_hours * self.employee.hourly) + extra_pay
+            feriado_pay = self.feriado_hours * self.employee.hourly * self.HORAS_FERIADOS_RATE
+            return (self.normal_hours * self.employee.hourly) + extra_pay + feriado_pay
         else:
             return "ERROR"
 
