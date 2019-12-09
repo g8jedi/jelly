@@ -92,9 +92,17 @@ class Comprobante(models.Model):
 
     def subtotal(self):
         if self.employee.payment_method == "SALARIO":
-            return self.employee.salary
+            return self.employee.salary  # Pending Horas Extras
         elif self.employee.payment_method == "POR HORA":
             return (self.normal_hours * self.employee.hourly) + (self.extra_hours * self.HORAS_EXTRAS_RATE * self.employee.hourly)
+        else:
+            return "ERROR"
+
+    def taxable_income(self):
+        if self.employee.payment_method == "SALARIO":
+            return self.employee.salary
+        elif self.employee.payment_method == "POR HORA":
+            return (self.normal_hours * self.employee.hourly)
         else:
             return "ERROR"
 
@@ -111,12 +119,12 @@ class Comprobante(models.Model):
 
     def SFS_employee_deduction(self):
         if self.employee.nationality == "DOMINICAN":
-            return self.subtotal() * self.EMPLOYEE_TAX_SFS
+            return self.EMPLOYEE_TAX_SFS * self.taxable_income()
         else:
             return "N/A"
 
     def AFP_employee_deduction(self):
         if self.employee.nationality == "DOMINICAN":
-            return self.subtotal() * self.EMPLOYEE_TAX_AFP
+            return self.taxable_income() * self.EMPLOYEE_TAX_AFP
         else:
             return "N/A"

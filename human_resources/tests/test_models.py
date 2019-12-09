@@ -254,6 +254,6 @@ class ComprobanteModelTest(TestCase):
         )
 
         self.assertAlmostEqual(
-            (comprobante.AFP_employee_deduction() + comprobante.AFP_employee_deduction()),
+            (comprobante.AFP_employee_deduction() + comprobante.SFS_employee_deduction()),
             deductions
         )
