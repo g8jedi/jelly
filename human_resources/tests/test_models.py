@@ -264,7 +264,7 @@ class ComprobanteModelTest(TestCase):
         HORAS_EXTRAS_RATE = 1.35
         SALARY_TO_DAILY_DIV = 23.83
         extra_hours = randint(10, 88)
-        extra_pay = (salary / SALARY_TO_DAILY_DIV / 8) * extra_hours
+        extra_pay = (salary / SALARY_TO_DAILY_DIV / 8) * extra_hours * HORAS_EXTRAS_RATE
         subtotal = extra_pay + salary
 
         employee = Employee.objects.create(
