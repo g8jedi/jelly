@@ -311,3 +311,18 @@ class ComprobanteModelTest(TestCase):
         comprobante = Comprobante.objects.create(employee=employee, normal_hours=normal_hours, feriado_hours=feriado_hours)
 
         self.assertAlmostEqual(comprobante.subtotal(), subtotal)
+
+    def test_comprobante_SRL_employer_liability_salary(self):
+        payment_method = "SALARIO"
+        salary = randint(10000, 18000)
+        SRL_EMPLOYER_LIABILITY = .0110
+        SRL_employer_cost = salary * SRL_EMPLOYER_LIABILITY
+
+        employee = Employee.objects.create(
+            forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
+            hire_date=datetime.now(), date_of_birth=datetime.now(), gender="FEMALE",
+            salary=salary, payment_method=payment_method
+        )
+        comprobante = Comprobante.objects.create(employee=employee)
+
+        self.assertAlmostEqual(comprobante.SRL_employer_liability(), SRL_employer_cost)
