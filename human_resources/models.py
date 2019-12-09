@@ -129,6 +129,12 @@ class Comprobante(models.Model):
             return self.subtotal()
 
     def SFS_employee_deduction(self):
+        """
+        Dominican Payroll Tax Rule:
+        (SFS) Seguro Familiar De Salud
+        The tax is imposed on both the employee 3.04% and employer 7.09%
+        This method calculates the deductions to the employee off his salary or regular pay
+        """
         if self.employee.nationality == "DOMINICAN":
             return self.EMPLOYEE_TAX_SFS * self.taxable_income()
         else:
@@ -137,5 +143,11 @@ class Comprobante(models.Model):
     def AFP_employee_deduction(self):
         if self.employee.nationality == "DOMINICAN":
             return self.taxable_income() * self.EMPLOYEE_TAX_AFP
+        else:
+            return "N/A"
+
+    def SRL_employer_liability(self):
+        if self.employee.nationality == "DOMINICAN":
+            return self.taxable_income() * self.SRL_EMPLOYER_LIABILITY
         else:
             return "N/A"
