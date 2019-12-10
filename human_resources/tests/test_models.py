@@ -1,4 +1,5 @@
 from datetime import datetime
+from decimal import Decimal
 from random import randint
 
 from django.test import TestCase
@@ -116,7 +117,7 @@ class ComprobanteModelTest(TestCase):
         AFP_tax = .0287
         salary = 15000
         deductions = (SFS_tax + AFP_tax) * salary
-        employee_netpay = salary - deductions
+        employee_netpay = salary - Decimal(deductions)
 
         employee = Employee.objects.create(
             forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
@@ -125,7 +126,7 @@ class ComprobanteModelTest(TestCase):
         )
         comprobante = Comprobante.objects.create(employee=employee)
 
-        self.assertAlmostEqual(comprobante.netpay(), employee_netpay)
+        self.assertAlmostEqual(comprobante.netpay(), round(employee_netpay, 2))
 
     def test_comprobante_perhour_employee_netpay_normal_hours(self):
         payment_method = "POR HORA"
@@ -143,7 +144,7 @@ class ComprobanteModelTest(TestCase):
         )
         comprobante = Comprobante.objects.create(employee=employee, normal_hours=normal_hours)
 
-        self.assertAlmostEqual(comprobante.netpay(), employee_netpay)
+        self.assertAlmostEqual(comprobante.netpay(), round(employee_netpay, 2))
 
     def test_comprobante_perhour_employee_netpay_with_extra_hours(self):
         payment_method = "POR HORA"
@@ -166,7 +167,7 @@ class ComprobanteModelTest(TestCase):
             employee=employee, normal_hours=normal_hours, extra_hours=extra_hours
         )
 
-        self.assertAlmostEqual(comprobante.netpay(), employee_netpay)
+        self.assertAlmostEqual(comprobante.netpay(), round(employee_netpay, 2))
 
     def test_comprobante_salary_employee_net_pay_foreigner(self):
         payment_method = "SALARIO"
@@ -180,7 +181,7 @@ class ComprobanteModelTest(TestCase):
         )
         comprobante = Comprobante.objects.create(employee=employee)
 
-        self.assertAlmostEqual(comprobante.netpay(), salary)
+        self.assertAlmostEqual(comprobante.netpay(), round(salary, 2))
 
     def test_comprobante_porhora_employee_net_pay_foreigner(self):
         payment_method = "POR HORA"
@@ -200,7 +201,7 @@ class ComprobanteModelTest(TestCase):
             employee=employee, normal_hours=normal_hours, extra_hours=extra_hours
         )
 
-        self.assertAlmostEqual(comprobante.netpay(), subtotal)
+        self.assertAlmostEqual(comprobante.netpay(), round(subtotal, 2))
 
     def test_comprobante_SFS_employee_deductions_salary(self):
         payment_method = "SALARIO"
@@ -274,7 +275,7 @@ class ComprobanteModelTest(TestCase):
         )
         comprobante = Comprobante.objects.create(employee=employee, extra_hours=extra_hours)
 
-        self.assertAlmostEqual(comprobante.subtotal(), subtotal)
+        self.assertAlmostEqual(comprobante.subtotal(), round(subtotal, 2))
 
     def test_comprobante_salary_feriado_hours(self):
         payment_method = "SALARIO"
@@ -292,7 +293,7 @@ class ComprobanteModelTest(TestCase):
         )
         comprobante = Comprobante.objects.create(employee=employee, feriado_hours=feriado_hours)
 
-        self.assertAlmostEqual(comprobante.subtotal(), subtotal)
+        self.assertAlmostEqual(comprobante.subtotal(), round(subtotal, 2))
 
     def test_comprobante_hourly_feriado_hours(self):
         payment_method = "POR HORA"

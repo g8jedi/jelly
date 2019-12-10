@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.db import models
 from django.urls import reverse
 
@@ -84,19 +86,21 @@ class Comprobante(models.Model):
 
     def salary_to_hourly(self):
         if self.employee.payment_method == "SALARIO":
-            return (self.employee.salary / self.SALARY_TO_DAILY_DIV / 8)
+            per_day = float(self.employee.salary) / self.SALARY_TO_DAILY_DIV
+            return round((per_day / 8), 4)
         else:
             return "ERROR: EMPLOYEE NOT SALARY EMPLOYEE"
 
     def subtotal(self):
         if self.employee.payment_method == "SALARIO":
-            extra_pay = self.salary_to_hourly() * self.extra_hours * self.HORAS_EXTRAS_RATE
-            feriado_pay = self.salary_to_hourly() * self.feriado_hours * self.HORAS_FERIADOS_RATE
-            return self.employee.salary + extra_pay + feriado_pay
+            extra_pay = self.salary_to_hourly() * float(self.extra_hours) * self.HORAS_EXTRAS_RATE
+            feriado_pay = self.salary_to_hourly() * float(self.feriado_hours) * self.HORAS_FERIADOS_RATE
+            return round((float(self.employee.salary) + extra_pay + feriado_pay), 2)
         elif self.employee.payment_method == "POR HORA":
             extra_pay = self.extra_hours * self.HORAS_EXTRAS_RATE * self.employee.hourly
             feriado_pay = self.feriado_hours * self.employee.hourly * self.HORAS_FERIADOS_RATE
-            return (self.normal_hours * self.employee.hourly) + extra_pay + feriado_pay
+            amount = ((self.normal_hours * self.employee.hourly) + extra_pay + feriado_pay)
+            return round(amount, 2)
         else:
             return "ERROR"
 
@@ -111,11 +115,11 @@ class Comprobante(models.Model):
     def netpay(self):
         if self.employee.nationality == "DOMINICAN":
             if self.employee.payment_method == "SALARIO":
-                deductions = self.employee.salary * self.EMPLOYEE_TOTAL_TAXES
-                return self.employee.salary - deductions
+                deductions = float(self.employee.salary) * self.EMPLOYEE_TOTAL_TAXES
+                return round((self.employee.salary - Decimal(deductions)), 2)
             elif self.employee.payment_method == "POR HORA":
                 deductions = self.employee.hourly * self.normal_hours * self.EMPLOYEE_TOTAL_TAXES
-                return self.subtotal() - deductions
+                return round((self.subtotal() - deductions), 2)
         else:
             return self.subtotal()
 
@@ -127,13 +131,13 @@ class Comprobante(models.Model):
         This method calculates the deductions to the employee off his salary or regular pay
         """
         if self.employee.nationality == "DOMINICAN":
-            return self.EMPLOYEE_TAX_SFS * self.taxable_income()
+            return self.EMPLOYEE_TAX_SFS * float(self.taxable_income())
         else:
             return "N/A"
 
     def AFP_employee_deduction(self):
         if self.employee.nationality == "DOMINICAN":
-            return self.taxable_income() * self.EMPLOYEE_TAX_AFP
+            return float(self.taxable_income()) * self.EMPLOYEE_TAX_AFP
         else:
             return "N/A"
 

@@ -1,0 +1,19 @@
+{% extends 'human_resources/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block breadcrumb %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="#">Human Resources</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Comprobante Detail</li>
+  </ol>
+</nav>
+{% endblock %}
+{% block content %}
+	<h1>{{ comprobante.employee.full_name }}</h1>
+	<h4>Comprobante</h4>
+	<p>Gross Pay: {{ comprobante.subtotal }}</p>
+    <p>SFS Seguro: {{ comprobante.SFS_employee_deduction }}</p>
+    <p>AFP Pension: {{ comprobante.AFP_employee_deduction }}</p>
+	<p>Net Pay: {{ comprobante.netpay }}</p>
+{% endblock %}

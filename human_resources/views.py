@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views import generic
 
-from .models import Employee
+from .models import Employee, Comprobante
 from .forms import EmployeeForm
 
 
@@ -19,3 +19,7 @@ class EmployeeDetailView(generic.DetailView):
 
 class EmployeeListView(generic.ListView):
     model = Employee
+
+
+class ComprobanteDetailView(generic.DetailView):
+    model = Comprobante
