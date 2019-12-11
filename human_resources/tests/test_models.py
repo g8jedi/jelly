@@ -154,9 +154,9 @@ class ComprobanteModelTest(TestCase):
         HORAS_EXTRAS_RATE = 1.35
         normal_hours = randint(60, 88)
         extra_hours = randint(10, 88)
-        subtotal = (hourly * HORAS_EXTRAS_RATE * extra_hours) + (hourly * normal_hours)
+        gross = (hourly * HORAS_EXTRAS_RATE * extra_hours) + (hourly * normal_hours)
         deductions = (SFS_tax + AFP_tax) * (hourly * normal_hours)
-        employee_netpay = subtotal - deductions
+        employee_netpay = gross - deductions
 
         employee = Employee.objects.create(
             forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
@@ -189,7 +189,7 @@ class ComprobanteModelTest(TestCase):
         normal_hours = randint(60, 88)
         extra_hours = randint(10, 88)
         HORAS_EXTRAS_RATE = 1.35
-        subtotal = (hourly * HORAS_EXTRAS_RATE * extra_hours) + (hourly * normal_hours)
+        gross = (hourly * HORAS_EXTRAS_RATE * extra_hours) + (hourly * normal_hours)
         nationality = "AMERICAN"
 
         employee = Employee.objects.create(
@@ -201,7 +201,7 @@ class ComprobanteModelTest(TestCase):
             employee=employee, normal_hours=normal_hours, extra_hours=extra_hours
         )
 
-        self.assertAlmostEqual(comprobante.netpay(), round(subtotal, 2))
+        self.assertAlmostEqual(comprobante.netpay(), round(gross, 2))
 
     def test_comprobante_SFS_employee_deductions_salary(self):
         payment_method = "SALARIO"
@@ -241,9 +241,9 @@ class ComprobanteModelTest(TestCase):
         HORAS_EXTRAS_RATE = 1.35
         normal_hours = randint(60, 88)
         extra_hours = randint(10, 88)
-        subtotal = (hourly * HORAS_EXTRAS_RATE * extra_hours) + (hourly * normal_hours)
+        gross = (hourly * HORAS_EXTRAS_RATE * extra_hours) + (hourly * normal_hours)
         deductions = (SFS_tax + AFP_tax) * (hourly * normal_hours)
-        employee_netpay = subtotal - deductions
+        employee_netpay = gross - deductions
 
         employee = Employee.objects.create(
             forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
@@ -266,7 +266,7 @@ class ComprobanteModelTest(TestCase):
         SALARY_TO_DAILY_DIV = 23.83
         extra_hours = randint(10, 88)
         extra_pay = (salary / SALARY_TO_DAILY_DIV / 8) * extra_hours * HORAS_EXTRAS_RATE
-        subtotal = extra_pay + salary
+        gross = extra_pay + salary
 
         employee = Employee.objects.create(
             forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
@@ -275,7 +275,7 @@ class ComprobanteModelTest(TestCase):
         )
         comprobante = Comprobante.objects.create(employee=employee, extra_hours=extra_hours)
 
-        self.assertAlmostEqual(comprobante.subtotal(), round(subtotal, 2))
+        self.assertAlmostEqual(comprobante.gross(), round(gross, 2))
 
     def test_comprobante_salary_feriado_hours(self):
         payment_method = "SALARIO"
@@ -284,7 +284,7 @@ class ComprobanteModelTest(TestCase):
         SALARY_TO_DAILY_DIV = 23.83
         feriado_hours = randint(1, 25)
         feriado_pay = (salary / SALARY_TO_DAILY_DIV / 8) * feriado_hours * HORAS_FERIADOS_RATE
-        subtotal = feriado_pay + salary
+        gross = feriado_pay + salary
 
         employee = Employee.objects.create(
             forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
@@ -293,7 +293,7 @@ class ComprobanteModelTest(TestCase):
         )
         comprobante = Comprobante.objects.create(employee=employee, feriado_hours=feriado_hours)
 
-        self.assertAlmostEqual(comprobante.subtotal(), round(subtotal, 2))
+        self.assertAlmostEqual(comprobante.gross(), round(gross, 2))
 
     def test_comprobante_hourly_feriado_hours(self):
         payment_method = "POR HORA"
@@ -302,7 +302,7 @@ class ComprobanteModelTest(TestCase):
         feriado_hours = randint(1, 25)
         normal_hours = randint(75, 88)
         feriado_pay = hourly * feriado_hours * HORAS_FERIADOS_RATE
-        subtotal = feriado_pay + (normal_hours * hourly)
+        gross = feriado_pay + (normal_hours * hourly)
 
         employee = Employee.objects.create(
             forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
@@ -311,7 +311,7 @@ class ComprobanteModelTest(TestCase):
         )
         comprobante = Comprobante.objects.create(employee=employee, normal_hours=normal_hours, feriado_hours=feriado_hours)
 
-        self.assertAlmostEqual(comprobante.subtotal(), subtotal)
+        self.assertAlmostEqual(comprobante.gross(), gross)
 
     def test_comprobante_SRL_employer_liability_salary(self):
         payment_method = "SALARIO"

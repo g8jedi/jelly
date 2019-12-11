@@ -91,14 +91,14 @@ class Comprobante(models.Model):
         else:
             return "ERROR: EMPLOYEE NOT SALARY EMPLOYEE"
 
-    def subtotal(self):
+    def gross(self):
         if self.employee.payment_method == "SALARIO":
             extra_pay = self.salary_to_hourly() * float(self.extra_hours) * self.HORAS_EXTRAS_RATE
             feriado_pay = self.salary_to_hourly() * float(self.feriado_hours) * self.HORAS_FERIADOS_RATE
             return round((float(self.employee.salary) + extra_pay + feriado_pay), 2)
         elif self.employee.payment_method == "POR HORA":
-            extra_pay = self.extra_hours * self.HORAS_EXTRAS_RATE * self.employee.hourly
-            feriado_pay = self.feriado_hours * self.employee.hourly * self.HORAS_FERIADOS_RATE
+            extra_pay = self.extra_hours * Decimal(self.HORAS_EXTRAS_RATE) * self.employee.hourly
+            feriado_pay = self.feriado_hours * self.employee.hourly * Decimal(self.HORAS_FERIADOS_RATE)
             amount = ((self.normal_hours * self.employee.hourly) + extra_pay + feriado_pay)
             return round(amount, 2)
         else:
@@ -119,9 +119,9 @@ class Comprobante(models.Model):
                 return round((self.employee.salary - Decimal(deductions)), 2)
             elif self.employee.payment_method == "POR HORA":
                 deductions = self.employee.hourly * self.normal_hours * self.EMPLOYEE_TOTAL_TAXES
-                return round((self.subtotal() - deductions), 2)
+                return round((self.gross() - deductions), 2)
         else:
-            return self.subtotal()
+            return self.gross()
 
     def SFS_employee_deduction(self):
         """
