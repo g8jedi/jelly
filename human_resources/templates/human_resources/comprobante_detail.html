@@ -10,10 +10,87 @@
 </nav>
 {% endblock %}
 {% block content %}
-	<h1>{{ comprobante.employee.full_name }}</h1>
-	<h4>Comprobante</h4>
-	<p>Gross Pay: {{ comprobante.subtotal }}</p>
-    <p>SFS Seguro: {{ comprobante.SFS_employee_deduction }}</p>
-    <p>AFP Pension: {{ comprobante.AFP_employee_deduction }}</p>
-	<p>Net Pay: {{ comprobante.netpay }}</p>
+	<h2>{{ comprobante.employee.full_name }}</h2>
+	<table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Cedula/Passport</th>
+      <th scope="col">Pay Period</th>
+      <th scope="col">Pay Date</th>
+      <th scope="col">Nationality</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">{{ comprobante.employee.identification }}</th>
+      <th scope="row">01/12/2019 - 15/12/2019</th>
+      <th scope="row">17/12/2019</th>
+      <th scope="row">{{ comprobante.employee.nationality }}</th>
+    </tr>
+  </tbody>
+</table>
+
+<div class="row">
+  <div class="col-7">
+    <h2 class="sub-header">Income Breakdown</h2>
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">POSITION</th>
+            <th scope="col">FORMA DE PAGO</th>
+            <th scope="col">RATE</th>
+            <th scope="col">HOURS</th>
+            <th scope="col">TOTAL</th>
+          </tr>
+      </thead>
+        <tbody>
+          <tr>
+            <th scope="col-md-1">Gross Earnings</th>
+            <td scope="col-md-2">{{ comprobante.employee.payment_method }}</td>
+            <td scope="col-md-3">{{ comprobante.employee.salary }}</td>
+            <td scope="col-md-4">{{ comprobante.normal_hours }}</td>
+            <td scope="col-md-5">{{ 9000 }}</td>
+          </tr>
+          <tr>
+            <td scope="row">Test 2</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="col-5">
+    <h2 class="sub-header">Deductions</h2>
+    <div class="table-responsive">
+      <table class="table table-striped">
+      <thead class="thead-dark">
+          <tr>
+            <th scope="col">DEDUCTION</th>
+            <th scope="col">RATE</th>
+            <th scope="col">TOTAL</th>
+          </tr>
+      </thead>
+        <tbody>
+          <tr>
+            <td class="col-md-1">Seguro Familiar de Salud</td>
+            <td class="col-md-2">3.04%</td>
+            <td class="col-md-3">{{ comprobante.SFS_employee_deduction }}</td>
+          </tr>
+          <tr>
+            <td class="col-md-1">Fondo de Pensiones</td>
+            <td class="col-md-2">2.87%</td>
+            <td class="col-md-3">{{ comprobante.AFP_employee_deduction }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th scope="col-md-1">NETPAY: {{ comprobante.netpay }}</th>
+    </tr>
+  </thead>
+
 {% endblock %}
