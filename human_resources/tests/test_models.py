@@ -5,7 +5,7 @@ from random import randint
 from django.test import TestCase
 from django.utils import timezone
 
-from human_resources.models import Employee, Comprobante
+from human_resources.models import Employee, Comprobante, Nomina
 import human_resources.labor_rules as Rules
 
 
@@ -265,3 +265,16 @@ class ComprobanteModelTest(TestCase):
         self.assertEqual(comprobante.AFP_employee_deduction(), "N/A")
         self.assertEqual(comprobante.SFS_employee_deduction(), "N/A")
         self.assertEqual(comprobante.total_employee_deductions(), "N/A")
+
+
+class NominaModelTest(TestCase):
+    def test_nomina_instance(self):
+        status = "In Process"
+        pay_period_start = datetime.date(2019, 10, 1)
+        pay_period_end = datetime.date(2019, 10, 30)
+
+        nomina = Nomina.objects.create(status=status, pay_period_start=pay_period_start, pay_period_end=pay_period_end)
+
+        self.assertEqual(comprobante.status, status)
+        self.assertEqual(comprobante.pay_period_start, pay_period_start)
+        self.assertEqual(comprobante.pay_period_end, pay_period_end)
