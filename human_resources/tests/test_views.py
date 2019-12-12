@@ -49,3 +49,27 @@ class ComprobanteDetailViewTests(TestCase):
         url = reverse('human_resources:comprobante-detail', args=(comprobante.id,))
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+
+    def test_comprobante_detail_correct_employee_details(self):
+        forename = "Malcom"
+        surname = "X"
+        nationality = "AMERICAN"
+        identification = "108801000"
+        payment_method = "POR HORA"
+        hourly = 67
+        normal_hours = 88
+
+        employee = Employee.objects.create(
+            forename=forename, surname=surname, identification=identification,
+            hire_date=datetime.today(), date_of_birth=datetime.today(),
+            hourly=hourly, nationality=nationality, payment_method=payment_method,
+        )
+        comprobante = Comprobante.objects.create(employee=employee)
+        url = reverse('human_resources:comprobante-detail', args=(comprobante.id,))
+        response = self.client.get(url)
+
+        self.assertContains(response, forename)
+        self.assertContains(response, surname)
+        self.assertContains(response, nationality)
+        self.assertContains(response, identification)
+        self.assertContains(response, payment_method)

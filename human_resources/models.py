@@ -118,7 +118,7 @@ class Comprobante(models.Model):
                 deductions = float(self.employee.salary) * self.EMPLOYEE_TOTAL_TAXES
                 return round((self.employee.salary - Decimal(deductions)), 2)
             elif self.employee.payment_method == "POR HORA":
-                deductions = self.employee.hourly * self.normal_hours * self.EMPLOYEE_TOTAL_TAXES
+                deductions = self.employee.hourly * self.normal_hours * Decimal(self.EMPLOYEE_TOTAL_TAXES)
                 return round((self.gross() - deductions), 2)
         else:
             return self.gross()
