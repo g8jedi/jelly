@@ -194,3 +194,12 @@ class Comprobante(models.Model):
             return round((self.feriado_hours_hourly() * self.feriado_hours), 2)
         else:
             return "ERROR"
+
+
+class Nomina(models.Model):
+    """
+    Model represents a pay period
+    """
+    complete = models.BooleanField(default=False)
+    pay_period_start = models.DateField()
+    pay_period_end = models.DateField()

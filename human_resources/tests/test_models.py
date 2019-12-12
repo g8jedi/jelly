@@ -269,12 +269,10 @@ class ComprobanteModelTest(TestCase):
 
 class NominaModelTest(TestCase):
     def test_nomina_instance(self):
-        status = "In Process"
-        pay_period_start = datetime.date(2019, 10, 1)
-        pay_period_end = datetime.date(2019, 10, 30)
+        pay_period_start = datetime.now()
+        pay_period_end = datetime.now()
 
-        nomina = Nomina.objects.create(status=status, pay_period_start=pay_period_start, pay_period_end=pay_period_end)
+        nomina = Nomina.objects.create(pay_period_start=pay_period_start, pay_period_end=pay_period_end)
 
-        self.assertEqual(comprobante.status, status)
-        self.assertEqual(comprobante.pay_period_start, pay_period_start)
-        self.assertEqual(comprobante.pay_period_end, pay_period_end)
+        self.assertEqual(nomina.pay_period_start, pay_period_start)
+        self.assertEqual(nomina.pay_period_end, pay_period_end)
