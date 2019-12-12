@@ -158,3 +158,4 @@ class ComprobanteDetailViewTests(TestCase):
         response = self.client.get(url)
 
         self.assertContains(response, "Passport")
+        self.assertNotContains(response, "Cedula")
