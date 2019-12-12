@@ -1,5 +1,5 @@
 from django.forms import ModelForm, DateInput
-from .models import Employee
+from .models import Employee, Nomina
 
 
 class DateInput(DateInput):
@@ -30,4 +30,16 @@ class EmployeeForm(ModelForm):
             'hire_date': ('Fecha de contratación'),
             'salary': ('Salario'),
 
+        }
+
+
+class NominaForm(ModelForm):
+    class Meta:
+        model = Nomina
+        fields = [
+            'pay_period_start', 'pay_period_end'
+        ]
+        widgets = {
+            'pay_period_start': DateInput,
+            'pay_period_end': DateInput
         }

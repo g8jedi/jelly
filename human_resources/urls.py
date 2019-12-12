@@ -9,4 +9,5 @@ urlpatterns = [
     path('employee/<int:pk>/', views.EmployeeDetailView.as_view(), name='employee-detail'),
     path('employee-list/', views.EmployeeListView.as_view(), name='employee-list'),
     path('comprobante/<int:pk>/', views.ComprobanteDetailView.as_view(), name='comprobante-detail'),
+    path('start-nomina/', views.CreateNominaView.as_view(), name='start-nomina'),
 ]
