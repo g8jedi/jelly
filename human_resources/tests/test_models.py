@@ -234,3 +234,34 @@ class ComprobanteModelTest(TestCase):
         self.assertEqual(comprobante.SFS_employee_deduction(), "N/A")
         self.assertEqual(comprobante.total_employee_deductions(), "N/A")
         self.assertEqual(comprobante.netpay(), gross)
+
+    def test_comprobante_salary_employee_foreigner(self):
+        # Employee Set Up
+        nationality = "AMERICAN"
+        salary = randint(10200, 28000)
+        quincena = Decimal(salary / 2)
+        payment_method = "SALARIO"
+
+        # Comprobante Logic
+        extra_hours = randint(1, 25)
+        feriado_hours = randint(3, 35)
+        salary_to_hourly = round((salary / Rules.SALARY_TO_DAILY_DIV / 8), 2)
+        extra_hours_hourly = round((salary_to_hourly * Rules.HORAS_EXTRAS_RATE), 2)
+        feriado_hours_hourly = round((salary_to_hourly * Rules.HORAS_FERIADOS_RATE), 2)
+        extra_hours_income = round((extra_hours * extra_hours_hourly), 2)
+        feriado_hours_income = round((feriado_hours * feriado_hours_hourly), 2)
+        gross = quincena + extra_hours_income + feriado_hours_income
+
+        employee = Employee.objects.create(
+            forename="Jairo", surname="Batista", identification="235214214tewf",
+            hire_date=datetime.now(), date_of_birth=datetime.now(),
+            payment_method=payment_method, nationality=nationality,
+            gender="MALE", salary=salary
+        )
+
+        comprobante = Comprobante.objects.create(employee=employee, extra_hours=extra_hours, feriado_hours=feriado_hours)
+
+        self.assertEqual(comprobante.netpay(), comprobante.gross())
+        self.assertEqual(comprobante.AFP_employee_deduction(), "N/A")
+        self.assertEqual(comprobante.SFS_employee_deduction(), "N/A")
+        self.assertEqual(comprobante.total_employee_deductions(), "N/A")
