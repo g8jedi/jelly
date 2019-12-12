@@ -65,8 +65,8 @@ class Comprobante(models.Model):
     """
     This model represents a paystub
     """
-    employee = models.ForeignKey('Employee', null=True, on_delete=models.SET_NULL, related_name="employee")
-
+    employee = models.ForeignKey('Employee', on_delete=models.CASCADE, related_name="employee")
+    nomina = models.ForeignKey('Nomina', on_delete=models.CASCADE)
     normal_hours = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     extra_hours = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     feriado_hours = models.DecimalField(max_digits=8, decimal_places=2, default=0)

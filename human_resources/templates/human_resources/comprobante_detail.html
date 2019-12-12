@@ -36,7 +36,7 @@
 
     <h4 class="sub-header">Income Breakdown</h4>
     <div class="table">
-      <table class="table table-sm">
+      <table class="table table-hover">
         <thead class="thead-light">
           <tr>
             <th scope="col">ITEM</th>
@@ -94,7 +94,7 @@
   <div class="col-7">
     <h4 class="sub-header">Employee Deductions</h4>
     <div class="table-responsive">
-      <table class="table table-sm">
+      <table class="table table-hover">
       <thead class="thead-light">
           <tr>
             <th scope="col">DEDUCTION</th>
@@ -127,7 +127,7 @@
   <div class="col-5">
     <h4 class="sub-header">Summary</h4>
     <div class="table-responsive">
-      <table class="table table-sm">
+      <table class="table">
         <tbody>
           <tr>
             <th class="col-md-1">GROSS INCOME</th>
@@ -137,7 +137,7 @@
             <th class="col-md-1">DEDUCTIONS</th>
             <td class="col-md-3">{{ comprobante.total_employee_deductions }}</td>
           </tr>
-          <tr>
+          <tr class="table-success">
             <th class="col-md-1">TOTAL</th>
             <th class="col-md-3">{{ comprobante.netpay }}</th>
           </tr>

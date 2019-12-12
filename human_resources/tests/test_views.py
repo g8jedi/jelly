@@ -5,7 +5,7 @@ from random import randint
 from django.test import TestCase
 from django.urls import reverse
 
-from human_resources.models import Employee, Comprobante
+from human_resources.models import Employee, Comprobante, Nomina
 import human_resources.labor_rules as Rules
 
 
@@ -49,7 +49,8 @@ class ComprobanteDetailViewTests(TestCase):
             forename="John", middle_name="Gabe", surname="Doe", identification="341314", 
             hire_date=datetime.today(), date_of_birth=datetime.today(), salary=10000
         )
-        comprobante = Comprobante.objects.create(employee=employee)
+        nomina = Nomina.objects.create(pay_period_start=datetime.now(), pay_period_end=datetime.now())
+        comprobante = Comprobante.objects.create(employee=employee, nomina=nomina)
         url = reverse('human_resources:comprobante-detail', args=(comprobante.id,))
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -68,7 +69,8 @@ class ComprobanteDetailViewTests(TestCase):
             hire_date=datetime.today(), date_of_birth=datetime.today(),
             hourly=hourly, nationality=nationality, payment_method=payment_method,
         )
-        comprobante = Comprobante.objects.create(employee=employee)
+        nomina = Nomina.objects.create(pay_period_start=datetime.now(), pay_period_end=datetime.now())
+        comprobante = Comprobante.objects.create(employee=employee, nomina=nomina)
         url = reverse('human_resources:comprobante-detail', args=(comprobante.id,))
         response = self.client.get(url)
 
@@ -92,7 +94,8 @@ class ComprobanteDetailViewTests(TestCase):
             hire_date=datetime.today(), date_of_birth=datetime.today(),
             salary=salary, nationality=nationality, payment_method=payment_method,
         )
-        comprobante = Comprobante.objects.create(employee=employee)
+        nomina = Nomina.objects.create(pay_period_start=datetime.now(), pay_period_end=datetime.now())
+        comprobante = Comprobante.objects.create(employee=employee, nomina=nomina)
         url = reverse('human_resources:comprobante-detail', args=(comprobante.id,))
         response = self.client.get(url)
 
@@ -115,7 +118,8 @@ class ComprobanteDetailViewTests(TestCase):
             hire_date=datetime.today(), date_of_birth=datetime.today(),
             salary=salary, nationality=nationality, payment_method=payment_method,
         )
-        comprobante = Comprobante.objects.create(employee=employee, extra_hours=extra_hours)
+        nomina = Nomina.objects.create(pay_period_start=datetime.now(), pay_period_end=datetime.now())
+        comprobante = Comprobante.objects.create(employee=employee, extra_hours=extra_hours, nomina=nomina)
         url = reverse('human_resources:comprobante-detail', args=(comprobante.id,))
         response = self.client.get(url)
 
@@ -139,7 +143,8 @@ class ComprobanteDetailViewTests(TestCase):
             hire_date=datetime.today(), date_of_birth=datetime.today(),
             salary=salary, nationality=nationality, payment_method=payment_method,
         )
-        comprobante = Comprobante.objects.create(employee=employee, feriado_hours=feriado_hours)
+        nomina = Nomina.objects.create(pay_period_start=datetime.now(), pay_period_end=datetime.now())
+        comprobante = Comprobante.objects.create(employee=employee, feriado_hours=feriado_hours, nomina=nomina)
         url = reverse('human_resources:comprobante-detail', args=(comprobante.id,))
         response = self.client.get(url)
 
@@ -153,7 +158,8 @@ class ComprobanteDetailViewTests(TestCase):
             hire_date=datetime.today(), date_of_birth=datetime.today(),
             salary=213445, nationality=nationality, payment_method="SALARIO",
         )
-        comprobante = Comprobante.objects.create(employee=employee)
+        nomina = Nomina.objects.create(pay_period_start=datetime.now(), pay_period_end=datetime.now())
+        comprobante = Comprobante.objects.create(employee=employee, nomina=nomina)
         url = reverse('human_resources:comprobante-detail', args=(comprobante.id,))
         response = self.client.get(url)
 

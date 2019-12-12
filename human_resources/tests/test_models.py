@@ -97,8 +97,9 @@ class ComprobanteModelTest(TestCase):
             payment_method=payment_method, phone_number=phone_number, nationality=nationality,
             gender=gender, salary=salary
         )
+        nomina = Nomina.objects.create(pay_period_start=datetime.now(), pay_period_end=datetime.now())
 
-        comprobante = Comprobante.objects.create(employee=employee)
+        comprobante = Comprobante.objects.create(employee=employee, nomina=nomina)
 
         self.assertIs(comprobante.employee.forename, forename)
         self.assertIs(comprobante.employee.middle_name, middle_name)
@@ -143,7 +144,8 @@ class ComprobanteModelTest(TestCase):
             gender="MALE", salary=salary
         )
 
-        comprobante = Comprobante.objects.create(employee=employee, extra_hours=extra_hours, feriado_hours=feriado_hours)
+        nomina = Nomina.objects.create(pay_period_start=datetime.now(), pay_period_end=datetime.now())
+        comprobante = Comprobante.objects.create(employee=employee, extra_hours=extra_hours, feriado_hours=feriado_hours, nomina=nomina)
 
         self.assertEqual(comprobante.gross(), gross)
         self.assertEqual(comprobante.extra_hours_hourly(), extra_hours_hourly)
@@ -186,8 +188,10 @@ class ComprobanteModelTest(TestCase):
             gender="MALE", hourly=hourly
         )
 
+        nomina = Nomina.objects.create(pay_period_start=datetime.now(), pay_period_end=datetime.now())
         comprobante = Comprobante.objects.create(
-            employee=employee, extra_hours=extra_hours, feriado_hours=feriado_hours, normal_hours=normal_hours
+            employee=employee, nomina=nomina,
+            extra_hours=extra_hours, feriado_hours=feriado_hours, normal_hours=normal_hours
         )
 
         self.assertEqual(comprobante.gross(), gross)
@@ -226,8 +230,10 @@ class ComprobanteModelTest(TestCase):
             gender="MALE", hourly=hourly
         )
 
+        nomina = Nomina.objects.create(pay_period_start=datetime.now(), pay_period_end=datetime.now())
         comprobante = Comprobante.objects.create(
-            employee=employee, extra_hours=extra_hours, feriado_hours=feriado_hours, normal_hours=normal_hours
+            employee=employee, nomina=nomina,
+            extra_hours=extra_hours, feriado_hours=feriado_hours, normal_hours=normal_hours
         )
 
         self.assertEqual(comprobante.AFP_employee_deduction(), "N/A")
@@ -259,7 +265,8 @@ class ComprobanteModelTest(TestCase):
             gender="MALE", salary=salary
         )
 
-        comprobante = Comprobante.objects.create(employee=employee, extra_hours=extra_hours, feriado_hours=feriado_hours)
+        nomina = Nomina.objects.create(pay_period_start=datetime.now(), pay_period_end=datetime.now())
+        comprobante = Comprobante.objects.create(employee=employee, nomina=nomina, extra_hours=extra_hours, feriado_hours=feriado_hours)
 
         self.assertEqual(comprobante.netpay(), comprobante.gross())
         self.assertEqual(comprobante.AFP_employee_deduction(), "N/A")
