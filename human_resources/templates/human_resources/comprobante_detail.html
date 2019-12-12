@@ -36,6 +36,7 @@
         <thead class="thead-light">
           <tr>
             <th scope="col">ITEM</th>
+            <th scope="col">METHOD</th>
             <th scope="col">RATE</th>
             <th scope="col">HOURS</th>
             <th scope="col">AMOUNT</th>
@@ -44,35 +45,41 @@
         <tbody>
           <tr>
             <td scope="col-md-1">Quincena</td>
-            <td scope="col-md-2">{{ comprobante.employee.salary }}</td>
             {% if comprobante.employee.payment_method == "SALARIO" %}
-            <td scope="col-md-3">N/A</td>
+              <td scope="col-md-2">{{ comprobante.employee.payment_method }}</td>
+              <td scope="col-md-3">{{ comprobante.employee.salary}}</td>
+              <td scope="col-md-4">N/A</td>
+              <td scope="col-md-5">{{ comprobante.quincena }}</td>
             {% else %}
-            <td scope="col-md-3">{{ comprobante.normal_hours }}</td>
+              <td scope="col-md-2">{{ comprobante.employee.payment_method }}</td>
+              <td scope="col-md-3">{{ comprobante.employee.hourly}}</td>
+              <td scope="col-md-4">{{ comprobante.normal_hours }}</td>
+              <td scope="col-md-4">{{ comprobante.taxable_income }}</td>
             {% endif %}
-            <td scope="col-md-4">{{ 9000 }}</td>
           </tr>
 
           {% if comprobante.extra_hours > 0 %}
           <tr>
             <td scope="row">Horas Extras</td>
-            <td scope="row">1.35x</td>
+            <td scope="row">POR HORA</td>
+            <td scope="row">{{ comprobante.extra_hours_hourly }}</td>
             <td scope="row">{{ comprobante.extra_hours }}</td>
-            <td scope="row">1000</td>
+            <td scope="row">{{ comprobante.extra_hours_income }}</td>
           </tr>
           {% endif %}
           {% if comprobante.feriado_hours > 0 %}
           <tr>
             <td scope="row">Horas Feriados</td>
-            <td scope="row">2x</td>
+            <td scope="row">POR HORA</td>
+            <td scope="row">{{ comprobante.feriado_hours_hourly }}</td>
             <td scope="row">{{ comprobante.feriado_hours }}</td>
-            <td scope="row">1000</td>
+            <td scope="row">{{ comprobante.feriado_hours_income }}</td>
           </tr>
           {% endif %}
         </tbody>
         <tfoot>
           <tr>
-            <th colspan="3">TOTAL</th>
+            <th colspan="4">TOTAL</th>
              <th>{{ comprobante.gross }}</th>
            </tr>
         </tfoot>
@@ -105,7 +112,7 @@
           <tr>
             <th class="col-md-1">TOTAL</th>
             <td class="col-md-2"></td>
-            <th class="col-md-3">(900)</th>
+            <th class="col-md-3">{{ comprobante.total_employee_deductions}}</th>
           </tr>
         {% else %}
         {% endif %}

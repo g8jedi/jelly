@@ -66,19 +66,19 @@ class Comprobante(models.Model):
     employee = models.ForeignKey('Employee', null=True, on_delete=models.SET_NULL, related_name="employee")
 
     # PAYROLL TAXES
-    EMPLOYEE_TAX_SFS = .0304
-    EMPLOYEE_TAX_AFP = .0287
+    EMPLOYEE_TAX_SFS = Decimal(.0304)
+    EMPLOYEE_TAX_AFP = Decimal(.0287)
     EMPLOYEE_TOTAL_TAXES = EMPLOYEE_TAX_SFS + EMPLOYEE_TAX_AFP
-    SFS_EMPLOYER_LIABILITY = .0709
-    AFP_EMPLOYER_LIABILITY = .0710
-    SRL_EMPLOYER_LIABILITY = .0110
-    INFOTEP_EMPLOYER_LIABILITY = .01
+    SFS_EMPLOYER_LIABILITY = Decimal(.0709)
+    AFP_EMPLOYER_LIABILITY = Decimal(.0710)
+    SRL_EMPLOYER_LIABILITY = Decimal(.0110)
+    INFOTEP_EMPLOYER_LIABILITY = Decimal(0.01)
     TOTAL_EMPLOYER_LIABILITIES = SFS_EMPLOYER_LIABILITY + AFP_EMPLOYER_LIABILITY + SRL_EMPLOYER_LIABILITY + INFOTEP_EMPLOYER_LIABILITY
 
     # RULES
-    HORAS_EXTRAS_RATE = 1.35
-    HORAS_FERIADOS_RATE = 2.00
-    SALARY_TO_DAILY_DIV = 23.83
+    HORAS_EXTRAS_RATE = Decimal(1.35)
+    HORAS_FERIADOS_RATE = Decimal(2.00)
+    SALARY_TO_DAILY_DIV = Decimal(23.83)
 
     normal_hours = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     extra_hours = models.DecimalField(max_digits=8, decimal_places=2, default=0)
@@ -92,23 +92,38 @@ class Comprobante(models.Model):
         else:
             return "ERROR"
 
+    def extra_hours_hourly(self):
+        if self.employee.payment_method == "SALARIO":
+            return round((self.salary_to_hourly() * self.HORAS_EXTRAS_RATE), 2)
+        elif self.employee.payment_method == "POR HORA":
+            return round((self.employee.hourly * self.HORAS_EXTRAS_RATE), 2)
+        else:
+            return "ERROR"
+
+    def feriado_hours_hourly(self):
+        if self.employee.payment_method == "SALARIO":
+            return round((self.salary_to_hourly() * self.HORAS_FERIADOS_RATE), 2)
+        elif self.employee.payment_method == "POR HORA":
+            return round((self.employee.hourly * self.HORAS_FERIADOS_RATE), 2)
+        else:
+            return "ERROR"
+
     def salary_to_hourly(self):
         if self.employee.payment_method == "SALARIO":
-            per_day = float(self.employee.salary) / self.SALARY_TO_DAILY_DIV
-            return round((per_day / 8), 4)
+            return round((self.employee.salary / self.SALARY_TO_DAILY_DIV / 8), 2)
         else:
             return "ERROR: EMPLOYEE NOT SALARY EMPLOYEE"
 
     def gross(self):
         if self.employee.payment_method == "SALARIO":
-            extra_pay = self.salary_to_hourly() * float(self.extra_hours) * self.HORAS_EXTRAS_RATE
-            feriado_pay = self.salary_to_hourly() * float(self.feriado_hours) * self.HORAS_FERIADOS_RATE
-            return round((float(self.quincena()) + extra_pay + feriado_pay), 2)
+            extra_pay = self.extra_hours_income()
+            feriado_pay = self.feriado_hours_income()
+            return self.quincena() + extra_pay + feriado_pay
         elif self.employee.payment_method == "POR HORA":
-            extra_pay = self.extra_hours * Decimal(self.HORAS_EXTRAS_RATE) * self.employee.hourly
-            feriado_pay = self.feriado_hours * self.employee.hourly * Decimal(self.HORAS_FERIADOS_RATE)
-            amount = ((self.normal_hours * self.employee.hourly) + extra_pay + feriado_pay)
-            return round(amount, 2)
+            extra_pay = self.extra_hours_income()
+            feriado_pay = self.feriado_hours_income()
+            amount = round(((self.normal_hours * self.employee.hourly) + extra_pay + feriado_pay), 2)
+            return amount
         else:
             return "ERROR"
 
@@ -116,18 +131,16 @@ class Comprobante(models.Model):
         if self.employee.payment_method == "SALARIO":
             return self.quincena()
         elif self.employee.payment_method == "POR HORA":
-            return (self.normal_hours * self.employee.hourly)
+            return round((self.normal_hours * self.employee.hourly), 2)
         else:
             return "ERROR"
 
     def netpay(self):
         if self.employee.nationality == "DOMINICAN":
             if self.employee.payment_method == "SALARIO":
-                deductions = float(self.quincena()) * self.EMPLOYEE_TOTAL_TAXES
-                return round((float(self.quincena()) - deductions), 2)
+                return self.quincena() - self.total_employee_deductions()
             elif self.employee.payment_method == "POR HORA":
-                deductions = self.employee.hourly * self.normal_hours * Decimal(self.EMPLOYEE_TOTAL_TAXES)
-                return round((self.gross() - deductions), 2)
+                return self.gross() - self.total_employee_deductions()
         else:
             return self.gross()
 
@@ -139,19 +152,25 @@ class Comprobante(models.Model):
         This method calculates the deductions to the employee off his salary or regular pay
         """
         if self.employee.nationality == "DOMINICAN":
-            return self.EMPLOYEE_TAX_SFS * float(self.taxable_income())
+            return round((self.EMPLOYEE_TAX_SFS * self.taxable_income()), 2)
         else:
             return "N/A"
 
     def AFP_employee_deduction(self):
         if self.employee.nationality == "DOMINICAN":
-            return float(self.taxable_income()) * self.EMPLOYEE_TAX_AFP
+            return round((self.taxable_income() * self.EMPLOYEE_TAX_AFP), 2)
+        else:
+            return "N/A"
+
+    def total_employee_deductions(self):
+        if self.employee.nationality == "DOMINICAN":
+            return self.SFS_employee_deduction() + self.AFP_employee_deduction()
         else:
             return "N/A"
 
     def SRL_employer_liability(self):
         if self.employee.nationality == "DOMINICAN":
-            return self.taxable_income() * self.SRL_EMPLOYER_LIABILITY
+            return round((self.taxable_income() * self.SRL_EMPLOYER_LIABILITY), 2)
         else:
             return "N/A"
 
@@ -178,3 +197,19 @@ class Comprobante(models.Model):
             return self.taxable_income() * self.TOTAL_EMPLOYER_LIABILITIES
         else:
             return "N/A"
+
+    def extra_hours_income(self):
+        if self.employee.payment_method == "SALARIO":
+            return round((self.extra_hours_hourly() * self.extra_hours), 2)
+        elif self.employee.payment_method == "POR HORA":
+            return round((self.extra_hours * self.extra_hours_hourly()), 2)
+        else:
+            return "ERROR"
+
+    def feriado_hours_income(self):
+        if self.employee.payment_method == "SALARIO":
+            return round((self.feriado_hours_hourly() * self.feriado_hours), 2)
+        elif self.employee.payment_method == "POR HORA":
+            return round((self.feriado_hours_hourly() * self.feriado_hours), 2)
+        else:
+            return "ERROR"

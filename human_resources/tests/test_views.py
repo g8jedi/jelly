@@ -1,4 +1,6 @@
 from datetime import datetime
+from decimal import Decimal
+from random import randint
 
 from django.test import TestCase
 from django.urls import reverse
@@ -40,6 +42,15 @@ class EmployeeListViewTests(TestCase):
 
 
 class ComprobanteDetailViewTests(TestCase):
+    SFS_tax = Decimal(.0304)
+    AFP_tax = Decimal(.0287)
+    HORAS_EXTRAS_RATE = Decimal(1.35)
+    SFS_EMPLOYER_LIABILITY = Decimal(.0709)
+    AFP_EMPLOYER_LIABILITY = Decimal(.0710)
+    SRL_EMPLOYER_LIABILITY = Decimal(.0110)
+    INFOTEP_EMPLOYER_LIABILITY = Decimal(.01)
+    SALARY_TO_DAILY_DIV = Decimal(23.83)
+
     def test_comprobante_detail_view_200(self):
         employee = Employee.objects.create(
             forename="John", middle_name="Gabe", surname="Doe", identification="341314", 
@@ -93,3 +104,27 @@ class ComprobanteDetailViewTests(TestCase):
         response = self.client.get(url)
 
         self.assertContains(response, quincena)
+
+    def test_comprobante_detail_salary_correct_horas_extras_info(self):
+        forename = "Malcom"
+        surname = "X"
+        nationality = "AMERICAN"
+        identification = "108801000"
+        payment_method = "SALARIO"
+        salary = randint(10000, 25000)
+        extra_hours = randint(1, 35)
+        salary_to_hourly = round((salary / self.SALARY_TO_DAILY_DIV / 8), 2)
+        horas_extras_hourly = round((salary_to_hourly * self.HORAS_EXTRAS_RATE), 2)
+        horas_extras_income = extra_hours * horas_extras_hourly
+
+        employee = Employee.objects.create(
+            forename=forename, surname=surname, identification=identification,
+            hire_date=datetime.today(), date_of_birth=datetime.today(),
+            salary=salary, nationality=nationality, payment_method=payment_method,
+        )
+        comprobante = Comprobante.objects.create(employee=employee, extra_hours=extra_hours)
+        url = reverse('human_resources:comprobante-detail', args=(comprobante.id,))
+        response = self.client.get(url)
+
+        self.assertContains(response, horas_extras_income)
+        self.assertContains(response, horas_extras_hourly)
