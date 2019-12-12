@@ -125,7 +125,7 @@ class Comprobante(models.Model):
     def netpay(self):
         if self.employee.nationality == "DOMINICAN":
             if self.employee.payment_method == "SALARIO":
-                return self.quincena() - self.total_employee_deductions()
+                return self.gross() - self.total_employee_deductions()
             elif self.employee.payment_method == "POR HORA":
                 return self.gross() - self.total_employee_deductions()
         else:
