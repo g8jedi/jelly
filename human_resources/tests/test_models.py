@@ -115,9 +115,10 @@ class ComprobanteModelTest(TestCase):
         payment_method = "SALARIO"
         SFS_tax = .0304
         AFP_tax = .0287
-        salary = 15000
-        deductions = (SFS_tax + AFP_tax) * salary
-        employee_netpay = salary - Decimal(deductions)
+        salary = randint(10000, 30000)
+        quincena = salary / 2
+        deductions = (SFS_tax + AFP_tax) * quincena
+        employee_netpay = quincena - deductions
 
         employee = Employee.objects.create(
             forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
@@ -206,9 +207,10 @@ class ComprobanteModelTest(TestCase):
 
     def test_comprobante_SFS_employee_deductions_salary(self):
         payment_method = "SALARIO"
-        salary = 15000
+        salary = randint(10000, 30000)
+        quincena = salary / 2
         SFS_tax_rate = .0304
-        SFS_employee_deductions = salary * SFS_tax_rate
+        SFS_employee_deductions = quincena * SFS_tax_rate
 
         employee = Employee.objects.create(
             forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
@@ -221,9 +223,10 @@ class ComprobanteModelTest(TestCase):
 
     def test_comprobante_AFP_employee_deductions_salary(self):
         payment_method = "SALARIO"
-        salary = 15000
+        salary = randint(10000, 30000)
+        quincena = salary / 2
         AFP_tax_rate = .0287
-        AFP_employee_deductions = salary * AFP_tax_rate
+        AFP_employee_deductions = quincena * AFP_tax_rate
 
         employee = Employee.objects.create(
             forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
@@ -319,8 +322,9 @@ class ComprobanteModelTest(TestCase):
     def test_comprobante_SRL_employer_liability_salary(self):
         payment_method = "SALARIO"
         salary = randint(10000, 18000)
+        quicena = salary / 2
         SRL_EMPLOYER_LIABILITY = .0110
-        SRL_employer_cost = salary * SRL_EMPLOYER_LIABILITY
+        SRL_employer_cost = quicena * SRL_EMPLOYER_LIABILITY
 
         employee = Employee.objects.create(
             forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
@@ -334,8 +338,9 @@ class ComprobanteModelTest(TestCase):
     def test_comprobante_AFP_employer_liability_salary(self):
         payment_method = "SALARIO"
         salary = randint(10000, 18000)
+        quincena  = salary / 2
         AFP_EMPLOYER_LIABILITY = .0710
-        AFP_employer_cost = salary * AFP_EMPLOYER_LIABILITY
+        AFP_employer_cost = quincena * AFP_EMPLOYER_LIABILITY
 
         employee = Employee.objects.create(
             forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
@@ -349,8 +354,9 @@ class ComprobanteModelTest(TestCase):
     def test_comprobante_SFS_employer_liability_salary(self):
         payment_method = "SALARIO"
         salary = randint(10000, 18000)
+        quincena = salary / 2
         SFS_EMPLOYER_LIABILITY = .0709
-        SFS_employer_cost = salary * SFS_EMPLOYER_LIABILITY
+        SFS_employer_cost = quincena * SFS_EMPLOYER_LIABILITY
 
         employee = Employee.objects.create(
             forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
@@ -364,8 +370,9 @@ class ComprobanteModelTest(TestCase):
     def test_comprobante_INFOTEP_employer_liability_salary(self):
         payment_method = "SALARIO"
         salary = randint(10000, 18000)
+        quincena = salary / 2
         INFOTEP_EMPLOYER_LIABILITY = .01
-        INFOTEP_employer_cost = salary * INFOTEP_EMPLOYER_LIABILITY
+        INFOTEP_employer_cost = quincena * INFOTEP_EMPLOYER_LIABILITY
 
         employee = Employee.objects.create(
             forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",

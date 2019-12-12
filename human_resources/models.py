@@ -84,6 +84,14 @@ class Comprobante(models.Model):
     extra_hours = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     feriado_hours = models.DecimalField(max_digits=8, decimal_places=2, default=0)
 
+    def quincena(self):
+        if self.employee.payment_method == "SALARIO":
+            return self.employee.salary / 2
+        elif self.employee.payment_method == "POR HORA":
+            return self.gross()
+        else:
+            return "ERROR"
+
     def salary_to_hourly(self):
         if self.employee.payment_method == "SALARIO":
             per_day = float(self.employee.salary) / self.SALARY_TO_DAILY_DIV
@@ -95,7 +103,7 @@ class Comprobante(models.Model):
         if self.employee.payment_method == "SALARIO":
             extra_pay = self.salary_to_hourly() * float(self.extra_hours) * self.HORAS_EXTRAS_RATE
             feriado_pay = self.salary_to_hourly() * float(self.feriado_hours) * self.HORAS_FERIADOS_RATE
-            return round((float(self.employee.salary) + extra_pay + feriado_pay), 2)
+            return round((float(self.quincena()) + extra_pay + feriado_pay), 2)
         elif self.employee.payment_method == "POR HORA":
             extra_pay = self.extra_hours * Decimal(self.HORAS_EXTRAS_RATE) * self.employee.hourly
             feriado_pay = self.feriado_hours * self.employee.hourly * Decimal(self.HORAS_FERIADOS_RATE)
@@ -106,7 +114,7 @@ class Comprobante(models.Model):
 
     def taxable_income(self):
         if self.employee.payment_method == "SALARIO":
-            return self.employee.salary
+            return self.quincena()
         elif self.employee.payment_method == "POR HORA":
             return (self.normal_hours * self.employee.hourly)
         else:
@@ -115,8 +123,8 @@ class Comprobante(models.Model):
     def netpay(self):
         if self.employee.nationality == "DOMINICAN":
             if self.employee.payment_method == "SALARIO":
-                deductions = float(self.employee.salary) * self.EMPLOYEE_TOTAL_TAXES
-                return round((self.employee.salary - Decimal(deductions)), 2)
+                deductions = float(self.quincena()) * self.EMPLOYEE_TOTAL_TAXES
+                return round((float(self.quincena()) - deductions), 2)
             elif self.employee.payment_method == "POR HORA":
                 deductions = self.employee.hourly * self.normal_hours * Decimal(self.EMPLOYEE_TOTAL_TAXES)
                 return round((self.gross() - deductions), 2)
