@@ -111,3 +111,47 @@ class ComprobanteModelTest(TestCase):
         self.assertIs(comprobante.employee.gender, gender)
         self.assertIs(comprobante.employee.salary, salary)
         self.assertIs(comprobante.employee.payment_method, payment_method)
+
+    def test_comprobante_salary_employee_dominican(self):
+        # Employee Set Up
+        nationality = "DOMINICAN"
+        salary = randint(10200, 28000)
+        quincena = Decimal(salary / 2)
+        payment_method = "SALARIO"
+
+        # Comprobante Logic
+        extra_hours = randint(1, 25)
+        feriado_hours = randint(3, 35)
+        salary_to_hourly = round((salary / Rules.SALARY_TO_DAILY_DIV / 8), 2)
+        extra_hours_hourly = round((salary_to_hourly * Rules.HORAS_EXTRAS_RATE), 2)
+        feriado_hours_hourly = round((salary_to_hourly * Rules.HORAS_FERIADOS_RATE), 2)
+        extra_hours_income = round((extra_hours * extra_hours_hourly), 2)
+        feriado_hours_income = round((feriado_hours * feriado_hours_hourly), 2)
+        gross = quincena + extra_hours_income + feriado_hours_income
+
+        # Deductions
+        taxable_income = quincena
+        AFP_deduction = round((taxable_income * Rules.EMPLOYEE_TAX_AFP), 2)
+        SFS_deduction = round((taxable_income * Rules.EMPLOYEE_TAX_SFS), 2)
+        total_deductions = AFP_deduction + SFS_deduction
+        net = gross - total_deductions
+
+        employee = Employee.objects.create(
+            forename="Jairo", surname="Batista", identification="235214214tewf",
+            hire_date=datetime.now(), date_of_birth=datetime.now(),
+            payment_method=payment_method, nationality=nationality,
+            gender="MALE", salary=salary
+        )
+
+        comprobante = Comprobante.objects.create(employee=employee, extra_hours=extra_hours, feriado_hours=feriado_hours)
+
+        self.assertEqual(comprobante.gross(), gross)
+        self.assertEqual(comprobante.extra_hours_hourly(), extra_hours_hourly)
+        self.assertEqual(comprobante.feriado_hours_hourly(), feriado_hours_hourly)
+        self.assertEqual(comprobante.extra_hours_income(), extra_hours_income)
+        self.assertEqual(comprobante.feriado_hours_income(), feriado_hours_income)
+        self.assertEqual(comprobante.taxable_income(), taxable_income)
+        self.assertEqual(comprobante.AFP_employee_deduction(), AFP_deduction)
+        self.assertEqual(comprobante.SFS_employee_deduction(), SFS_deduction)
+        self.assertEqual(comprobante.total_employee_deductions(), total_deductions)
+        self.assertEqual(comprobante.netpay(), net)

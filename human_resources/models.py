@@ -73,7 +73,7 @@ class Comprobante(models.Model):
 
     def quincena(self):
         if self.employee.payment_method == "SALARIO":
-            return self.employee.salary / 2
+            return Decimal(self.employee.salary / 2)
         elif self.employee.payment_method == "POR HORA":
             return self.gross()
         else:
