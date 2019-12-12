@@ -169,9 +169,10 @@ class ComprobanteModelTest(TestCase):
 
         self.assertAlmostEqual(comprobante.netpay(), Decimal(round(employee_netpay, 2)))
 
-    def test_comprobante_salary_employee_net_pay_foreigner(self):
+    def test_comprobante_salary_employee_netpay_foreigner(self):
         payment_method = "SALARIO"
-        salary = 15000
+        salary = randint(10000, 30000)
+        quincena = salary / 2
         nationality = "AMERICAN"
 
         employee = Employee.objects.create(
@@ -181,7 +182,7 @@ class ComprobanteModelTest(TestCase):
         )
         comprobante = Comprobante.objects.create(employee=employee)
 
-        self.assertAlmostEqual(comprobante.netpay(), round(salary, 2))
+        self.assertAlmostEqual(comprobante.netpay(), round(quincena, 2))
 
     def test_comprobante_porhora_employee_net_pay_foreigner(self):
         payment_method = "POR HORA"
@@ -261,12 +262,13 @@ class ComprobanteModelTest(TestCase):
 
     def test_comprobante_salary_employee_with_hours_extra(self):
         payment_method = "SALARIO"
-        salary = 18000
+        salary = randint(10000, 24000)
+        quincena = salary / 2
         HORAS_EXTRAS_RATE = 1.35
         SALARY_TO_DAILY_DIV = 23.83
         extra_hours = randint(10, 88)
         extra_pay = (salary / SALARY_TO_DAILY_DIV / 8) * extra_hours * HORAS_EXTRAS_RATE
-        gross = extra_pay + salary
+        gross = extra_pay + quincena
 
         employee = Employee.objects.create(
             forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
@@ -280,11 +282,12 @@ class ComprobanteModelTest(TestCase):
     def test_comprobante_salary_feriado_hours(self):
         payment_method = "SALARIO"
         salary = randint(10000, 24000)
+        quicena = salary / 2
         HORAS_FERIADOS_RATE = 2.00
         SALARY_TO_DAILY_DIV = 23.83
         feriado_hours = randint(1, 25)
         feriado_pay = (salary / SALARY_TO_DAILY_DIV / 8) * feriado_hours * HORAS_FERIADOS_RATE
-        gross = feriado_pay + salary
+        gross = feriado_pay + quicena
 
         employee = Employee.objects.create(
             forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
@@ -392,3 +395,17 @@ class ComprobanteModelTest(TestCase):
         comprobante = Comprobante.objects.create(employee=employee, normal_hours=normal_hours)
 
         self.assertAlmostEqual(comprobante.total_employer_liabilities(), employer_cost)
+
+    def test_comprobante_salary_employee_quincena(self):
+        payment_method = "SALARIO"
+        salary = 18000
+        quincena = 18000 / 2
+
+        employee = Employee.objects.create(
+            forename="Ana", middle_name="Mariel", surname="Mercedes Acosta",
+            hire_date=datetime.now(), date_of_birth=datetime.now(), gender="FEMALE",
+            salary=salary, payment_method=payment_method
+        )
+        comprobante = Comprobante.objects.create(employee=employee)
+
+        self.assertAlmostEquals(comprobante.quincena(), quincena)

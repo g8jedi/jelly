@@ -73,3 +73,23 @@ class ComprobanteDetailViewTests(TestCase):
         self.assertContains(response, nationality)
         self.assertContains(response, identification)
         self.assertContains(response, payment_method)
+
+    def test_comprobante_detail_salary_correct_quincena(self):
+        forename = "Malcom"
+        surname = "X"
+        nationality = "AMERICAN"
+        identification = "108801000"
+        payment_method = "SALARIO"
+        salary = 18000
+        quincena = salary / 2
+
+        employee = Employee.objects.create(
+            forename=forename, surname=surname, identification=identification,
+            hire_date=datetime.today(), date_of_birth=datetime.today(),
+            salary=salary, nationality=nationality, payment_method=payment_method,
+        )
+        comprobante = Comprobante.objects.create(employee=employee)
+        url = reverse('human_resources:comprobante-detail', args=(comprobante.id,))
+        response = self.client.get(url)
+
+        self.assertContains(response, quincena)
