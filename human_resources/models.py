@@ -75,7 +75,7 @@ class Comprobante(models.Model):
         if self.employee.payment_method == "SALARIO":
             return Decimal(self.employee.salary / 2)
         elif self.employee.payment_method == "POR HORA":
-            return self.gross()
+            return self.taxable_income()
         else:
             return "ERROR"
 
