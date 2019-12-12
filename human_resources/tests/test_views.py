@@ -165,3 +165,15 @@ class ComprobanteDetailViewTests(TestCase):
 
         self.assertContains(response, "Passport")
         self.assertNotContains(response, "Cedula")
+
+
+class NominaFormViewTests(TestCase):
+    def test_nomina_form_200(self):
+        """
+        Test if Nomina form 200
+        """
+        url = reverse('human_resources:start-nomina')
+        response = self.client.get(url)
+
+        # Test attribute descriptions appear
+        self.assertIs(response.status_code, 200)
