@@ -6,6 +6,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from human_resources.models import Employee, Comprobante
+import human_resources.labor_rules as Rules
 
 
 class EmployeeFormViewTests(TestCase):
@@ -42,14 +43,6 @@ class EmployeeListViewTests(TestCase):
 
 
 class ComprobanteDetailViewTests(TestCase):
-    SFS_tax = Decimal(.0304)
-    AFP_tax = Decimal(.0287)
-    HORAS_EXTRAS_RATE = Decimal(1.35)
-    SFS_EMPLOYER_LIABILITY = Decimal(.0709)
-    AFP_EMPLOYER_LIABILITY = Decimal(.0710)
-    SRL_EMPLOYER_LIABILITY = Decimal(.0110)
-    INFOTEP_EMPLOYER_LIABILITY = Decimal(.01)
-    SALARY_TO_DAILY_DIV = Decimal(23.83)
 
     def test_comprobante_detail_view_200(self):
         employee = Employee.objects.create(
@@ -113,8 +106,8 @@ class ComprobanteDetailViewTests(TestCase):
         payment_method = "SALARIO"
         salary = randint(10000, 25000)
         extra_hours = randint(1, 35)
-        salary_to_hourly = round((salary / self.SALARY_TO_DAILY_DIV / 8), 2)
-        horas_extras_hourly = round((salary_to_hourly * self.HORAS_EXTRAS_RATE), 2)
+        salary_to_hourly = round((salary / Rules.SALARY_TO_DAILY_DIV / 8), 2)
+        horas_extras_hourly = round((salary_to_hourly * Rules.HORAS_EXTRAS_RATE), 2)
         horas_extras_income = extra_hours * horas_extras_hourly
 
         employee = Employee.objects.create(

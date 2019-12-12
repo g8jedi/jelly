@@ -6,6 +6,7 @@ from django.test import TestCase
 from django.utils import timezone
 
 from human_resources.models import Employee, Comprobante
+import human_resources.labor_rules as Rules
 
 
 class EmployeeModelTests(TestCase):
@@ -76,16 +77,6 @@ class EmployeeModelTests(TestCase):
 
 
 class ComprobanteModelTest(TestCase):
-    SFS_tax = Decimal(.0304)
-    AFP_tax = Decimal(.0287)
-    HORAS_EXTRAS_RATE = Decimal(1.35)
-    HORAS_FERIADOS_RATE = Decimal(2.00)
-    SFS_EMPLOYER_LIABILITY = Decimal(.0709)
-    AFP_EMPLOYER_LIABILITY = Decimal(.0710)
-    SRL_EMPLOYER_LIABILITY = Decimal(.0110)
-    INFOTEP_EMPLOYER_LIABILITY = Decimal(.01)
-    SALARY_TO_DAILY_DIV = Decimal(23.83)
-
     def test_comprobante_creation(self):
         forename = "Gianna"
         middle_name = "Haydee"

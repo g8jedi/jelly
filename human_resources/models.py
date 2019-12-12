@@ -3,6 +3,8 @@ from decimal import Decimal
 from django.db import models
 from django.urls import reverse
 
+import human_resources.labor_rules as Rule
+
 
 class Employee(models.Model):
     """
@@ -65,21 +67,6 @@ class Comprobante(models.Model):
     """
     employee = models.ForeignKey('Employee', null=True, on_delete=models.SET_NULL, related_name="employee")
 
-    # PAYROLL TAXES
-    EMPLOYEE_TAX_SFS = Decimal(.0304)
-    EMPLOYEE_TAX_AFP = Decimal(.0287)
-    EMPLOYEE_TOTAL_TAXES = EMPLOYEE_TAX_SFS + EMPLOYEE_TAX_AFP
-    SFS_EMPLOYER_LIABILITY = Decimal(.0709)
-    AFP_EMPLOYER_LIABILITY = Decimal(.0710)
-    SRL_EMPLOYER_LIABILITY = Decimal(.0110)
-    INFOTEP_EMPLOYER_LIABILITY = Decimal(0.01)
-    TOTAL_EMPLOYER_LIABILITIES = SFS_EMPLOYER_LIABILITY + AFP_EMPLOYER_LIABILITY + SRL_EMPLOYER_LIABILITY + INFOTEP_EMPLOYER_LIABILITY
-
-    # RULES
-    HORAS_EXTRAS_RATE = Decimal(1.35)
-    HORAS_FERIADOS_RATE = Decimal(2.00)
-    SALARY_TO_DAILY_DIV = Decimal(23.83)
-
     normal_hours = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     extra_hours = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     feriado_hours = models.DecimalField(max_digits=8, decimal_places=2, default=0)
@@ -94,23 +81,23 @@ class Comprobante(models.Model):
 
     def extra_hours_hourly(self):
         if self.employee.payment_method == "SALARIO":
-            return round((self.salary_to_hourly() * self.HORAS_EXTRAS_RATE), 2)
+            return round((self.salary_to_hourly() * Rule.HORAS_EXTRAS_RATE), 2)
         elif self.employee.payment_method == "POR HORA":
-            return round((self.employee.hourly * self.HORAS_EXTRAS_RATE), 2)
+            return round((self.employee.hourly * Rule.HORAS_EXTRAS_RATE), 2)
         else:
             return "ERROR"
 
     def feriado_hours_hourly(self):
         if self.employee.payment_method == "SALARIO":
-            return round((self.salary_to_hourly() * self.HORAS_FERIADOS_RATE), 2)
+            return round((self.salary_to_hourly() * Rule.HORAS_FERIADOS_RATE), 2)
         elif self.employee.payment_method == "POR HORA":
-            return round((self.employee.hourly * self.HORAS_FERIADOS_RATE), 2)
+            return round((self.employee.hourly * Rule.HORAS_FERIADOS_RATE), 2)
         else:
             return "ERROR"
 
     def salary_to_hourly(self):
         if self.employee.payment_method == "SALARIO":
-            return round((self.employee.salary / self.SALARY_TO_DAILY_DIV / 8), 2)
+            return round((self.employee.salary / Rule.SALARY_TO_DAILY_DIV / 8), 2)
         else:
             return "ERROR: EMPLOYEE NOT SALARY EMPLOYEE"
 
@@ -152,13 +139,13 @@ class Comprobante(models.Model):
         This method calculates the deductions to the employee off his salary or regular pay
         """
         if self.employee.nationality == "DOMINICAN":
-            return round((self.EMPLOYEE_TAX_SFS * self.taxable_income()), 2)
+            return round((Rule.EMPLOYEE_TAX_SFS * self.taxable_income()), 2)
         else:
             return "N/A"
 
     def AFP_employee_deduction(self):
         if self.employee.nationality == "DOMINICAN":
-            return round((self.taxable_income() * self.EMPLOYEE_TAX_AFP), 2)
+            return round((self.taxable_income() * Rule.EMPLOYEE_TAX_AFP), 2)
         else:
             return "N/A"
 
@@ -170,13 +157,13 @@ class Comprobante(models.Model):
 
     def SRL_employer_liability(self):
         if self.employee.nationality == "DOMINICAN":
-            return round((self.taxable_income() * self.SRL_EMPLOYER_LIABILITY), 2)
+            return round((self.taxable_income() * Rule.SRL_EMPLOYER_LIABILITY), 2)
         else:
             return "N/A"
 
     def AFP_employer_liability(self):
         if self.employee.nationality == "DOMINICAN":
-            return self.taxable_income() * self.AFP_EMPLOYER_LIABILITY
+            return self.taxable_income() * Rule.AFP_EMPLOYER_LIABILITY
         else:
             return "N/A"
 
@@ -188,13 +175,7 @@ class Comprobante(models.Model):
 
     def INFOTEP_employer_liability(self):
         if self.employee.nationality == "DOMINICAN":
-            return self.taxable_income() * self.INFOTEP_EMPLOYER_LIABILITY
-        else:
-            return "N/A"
-
-    def total_employer_liabilities(self):
-        if self.employee.nationality == "DOMINICAN":
-            return self.taxable_income() * self.TOTAL_EMPLOYER_LIABILITIES
+            return self.taxable_income() * Rule.INFOTEP_EMPLOYER_LIABILITY
         else:
             return "N/A"
 
