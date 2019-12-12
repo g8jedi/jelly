@@ -78,7 +78,7 @@ class ComprobanteDetailViewTests(TestCase):
         self.assertContains(response, identification)
         self.assertContains(response, payment_method)
 
-    def test_comprobante_detail_salary_correct_quincena(self):
+    def test_comprobante_detail_salary_correct_quincena_dominican(self):
         forename = "Malcom"
         surname = "X"
         nationality = "AMERICAN"
@@ -98,7 +98,7 @@ class ComprobanteDetailViewTests(TestCase):
 
         self.assertContains(response, quincena)
 
-    def test_comprobante_detail_salary_correct_horas_extras_info(self):
+    def test_comprobante_detail_salary_horas_extras_info_dominican(self):
         forename = "Malcom"
         surname = "X"
         nationality = "AMERICAN"
@@ -121,3 +121,27 @@ class ComprobanteDetailViewTests(TestCase):
 
         self.assertContains(response, horas_extras_income)
         self.assertContains(response, horas_extras_hourly)
+
+    def test_comprobante_detail_salary_horas_feriados_info_dominican(self):
+        forename = "Malcom"
+        surname = "X"
+        nationality = "AMERICAN"
+        identification = "108801000"
+        payment_method = "SALARIO"
+        salary = randint(10000, 25000)
+        feriado_hours = randint(1, 35)
+        salary_to_hourly = round((salary / Rules.SALARY_TO_DAILY_DIV / 8), 2)
+        horas_feriados_hourly = round((salary_to_hourly * Rules.HORAS_FERIADOS_RATE), 2)
+        horas_feriados_income = horas_feriados_hourly * feriado_hours
+
+        employee = Employee.objects.create(
+            forename=forename, surname=surname, identification=identification,
+            hire_date=datetime.today(), date_of_birth=datetime.today(),
+            salary=salary, nationality=nationality, payment_method=payment_method,
+        )
+        comprobante = Comprobante.objects.create(employee=employee, feriado_hours=feriado_hours)
+        url = reverse('human_resources:comprobante-detail', args=(comprobante.id,))
+        response = self.client.get(url)
+
+        self.assertContains(response, horas_feriados_income)
+        self.assertContains(response, horas_feriados_hourly)
