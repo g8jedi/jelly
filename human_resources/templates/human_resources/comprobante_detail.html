@@ -14,7 +14,11 @@
 	<table class="table table-sm">
   <thead class="thead-light">
     <tr>
-      <th scope="col">Cedula/Passport</th>
+      {% if comprobante.employee.nationality == "DOMINICAN" %}
+      <th scope="col">Cedula</th>
+      {% else %}
+      <th scope="col">Passport</th>
+      {% endif %}
       <th scope="col">Nationality</th>
       <th scope="col">Method of Payment</th>
       <th scope="col">Pay Period</th>

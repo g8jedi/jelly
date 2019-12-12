@@ -78,7 +78,7 @@ class ComprobanteDetailViewTests(TestCase):
         self.assertContains(response, identification)
         self.assertContains(response, payment_method)
 
-    def test_comprobante_detail_salary_correct_quincena_dominican(self):
+    def test_comprobante_detail_salary_correct_quincena(self):
         forename = "Malcom"
         surname = "X"
         nationality = "AMERICAN"
@@ -98,7 +98,7 @@ class ComprobanteDetailViewTests(TestCase):
 
         self.assertContains(response, quincena)
 
-    def test_comprobante_detail_salary_horas_extras_info_dominican(self):
+    def test_comprobante_detail_salary_horas_extras_info(self):
         forename = "Malcom"
         surname = "X"
         nationality = "AMERICAN"
@@ -122,7 +122,7 @@ class ComprobanteDetailViewTests(TestCase):
         self.assertContains(response, horas_extras_income)
         self.assertContains(response, horas_extras_hourly)
 
-    def test_comprobante_detail_salary_horas_feriados_info_dominican(self):
+    def test_comprobante_detail_salary_horas_feriados_info(self):
         forename = "Malcom"
         surname = "X"
         nationality = "AMERICAN"
@@ -145,3 +145,16 @@ class ComprobanteDetailViewTests(TestCase):
 
         self.assertContains(response, horas_feriados_income)
         self.assertContains(response, horas_feriados_hourly)
+
+    def test_comprobante_detail_passport(self):
+        nationality = "AMERICAN"
+        employee = Employee.objects.create(
+            forename="Malcolm", surname="X", identification="23523534",
+            hire_date=datetime.today(), date_of_birth=datetime.today(),
+            salary=213445, nationality=nationality, payment_method="SALARIO",
+        )
+        comprobante = Comprobante.objects.create(employee=employee)
+        url = reverse('human_resources:comprobante-detail', args=(comprobante.id,))
+        response = self.client.get(url)
+
+        self.assertContains(response, "Passport")
