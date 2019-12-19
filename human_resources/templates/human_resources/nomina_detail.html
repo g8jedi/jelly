@@ -1,1 +1,32 @@
-Success
+{% extends 'human_resources/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block breadcrumb %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="#">Human Resources</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Nomina Detail View</li>
+  </ol>
+</nav>
+{% endblock %}
+{% block content %}
+	<h1>{{ nomina.pay_period_start }} - {{ nomina.pay_period_end }}</h1>
+
+	<h4>Employees Information</h4>
+	<ul>
+	{% for employee in nomina.employees.all %}
+		 <li>{{ employee.full_name }}</li>
+	{% empty %}
+	     <li>No employees yet.</li>
+	{% endfor %}
+	</ul>
+    <h4>Comprobante Information</h4>
+	<ul>
+	{% for comprobante in nomina.comprobante_set.all %}
+		 <li>{{ comprobante.id }}</li>
+	{% empty %}
+	     <li>No comprobantes yet.</li>
+	{% endfor %}
+	</ul>
+
+{% endblock %}

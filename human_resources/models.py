@@ -2,6 +2,7 @@ from decimal import Decimal
 
 from django.db import models
 from django.urls import reverse
+from django.db.models.signals import post_save
 
 import human_resources.labor_rules as Rule
 
@@ -203,3 +204,15 @@ class Nomina(models.Model):
     complete = models.BooleanField(default=False)
     pay_period_start = models.DateField()
     pay_period_end = models.DateField()
+    employees = models.ManyToManyField(Employee, limit_choices_to={'active': True})
+
+
+def set_up_nomina(sender, instance, **kwargs):
+    active_employees = list(Employee.objects.filter(active=True))
+    print(active_employees)
+    for employee in active_employees:
+        instance.employees.add(employee)
+        Comprobante.objects.create(nomina=instance, employee=employee)
+
+
+post_save.connect(set_up_nomina, sender=Nomina)
