@@ -35,6 +35,9 @@ class CreateNominaView(generic.edit.CreateView):
     form_class = NominaForm
     model = Nomina
 
+    def get_success_url(self):
+        return reverse_lazy('human_resources:nomina-detail', kwargs={'pk': self.object.pk})
+
 
 class NominaDetailView(generic.DetailView):
     model = Nomina
