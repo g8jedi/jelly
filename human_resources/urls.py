@@ -10,4 +10,6 @@ urlpatterns = [
     path('employee-list/', views.EmployeeListView.as_view(), name='employee-list'),
     path('comprobante/<int:pk>/', views.ComprobanteDetailView.as_view(), name='comprobante-detail'),
     path('start-nomina/', views.CreateNominaView.as_view(), name='start-nomina'),
+    path('comprobante-create/', views.ComprobanteCreate.as_view(), name='comprobante-create'),  # Create Nomina & add Comprobantes
+    path('nomina/<int:pk>/', views.NominaDetailView.as_view(), name='nomina-detail'),
 ]

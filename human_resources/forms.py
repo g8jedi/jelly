@@ -1,5 +1,11 @@
 from django.forms import ModelForm, DateInput
-from .models import Employee, Nomina
+from django.forms.models import inlineformset_factory
+
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Field, Fieldset, Div, HTML, ButtonHolder, Submit
+from .custom_layout_object import *
+
+from .models import Employee, Nomina, Comprobante
 
 
 class DateInput(DateInput):
@@ -33,6 +39,19 @@ class EmployeeForm(ModelForm):
         }
 
 
+class ComprobanteForm(ModelForm):
+
+    class Meta:
+        model = Comprobante
+        exclude = ()
+
+
+ComprobanteFormSet = inlineformset_factory(
+    Nomina, Comprobante, form=ComprobanteForm,
+    fields=['employee', 'normal_hours', 'extra_hours', 'feriado_hours'], extra=1, can_delete=True
+)
+
+
 class NominaForm(ModelForm):
     class Meta:
         model = Nomina
@@ -43,3 +62,21 @@ class NominaForm(ModelForm):
             'pay_period_start': DateInput,
             'pay_period_end': DateInput
         }
+
+    def __init__(self, *args, **kwargs):
+        super(NominaForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = True
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-md-3 create-label'
+        self.helper.field_class = 'col-md-3'
+        self.helper.layout = Layout(
+            Div(
+                Field('pay_period_start'),
+                Field('pay_period_end'),
+                Fieldset('Select Employees',
+                         Formset('employees')),
+                HTML("<br>"),
+                ButtonHolder(Submit('submit', 'Process')),
+            )
+        )
