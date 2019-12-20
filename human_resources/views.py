@@ -36,25 +36,25 @@ class CreateNominaView(generic.edit.CreateView):
     model = Nomina
 
     def get_success_url(self):
-        return reverse_lazy('human_resources:nomina-detail', kwargs={'pk': self.object.pk})
+        return reverse_lazy('human_resources:comprobante-submit', kwargs={'pk': self.object.pk})
 
 
 class NominaDetailView(generic.DetailView):
     model = Nomina
 
 
-class ComprobanteCreate(generic.CreateView):
-    model = Comprobante
+class ComprobanteSubmit(generic.UpdateView):
+    model = Nomina
     template_name = 'human_resources/comprobante_create.html'
     form_class = NominaForm
     success_url = None
 
     def get_context_data(self, **kwargs):
-        data = super(ComprobanteCreate, self).get_context_data(**kwargs)
+        data = super(ComprobanteSubmit, self).get_context_data(**kwargs)
         if self.request.POST:
-            data['employees'] = ComprobanteFormSet(self.request.POST)
+            data['employees'] = ComprobanteFormSet(self.request.POST, instance=self.object)
         else:
-            data['employees'] = ComprobanteFormSet()
+            data['employees'] = ComprobanteFormSet(instance=self.object)
         return data
 
     def form_valid(self, form):
@@ -66,7 +66,7 @@ class ComprobanteCreate(generic.CreateView):
             if employees.is_valid():
                 employees.instance = self.object
                 employees.save()
-        return super(ComprobanteCreate, self).form_valid(form)
+        return super(ComprobanteSubmit, self).form_valid(form)
 
     def get_success_url(self):
         return reverse_lazy('human_resources:nomina-detail', kwargs={'pk': self.object.pk})

@@ -1,7 +1,7 @@
   
 {% load crispy_forms_tags %}
 {% load staticfiles %}
-<table class="col-md-9" style="margin-left: 10px;">
+<table class="table table-striped table-sm">
 {{ formset.management_form|crispy }}
 
     {% for form in formset.forms %}

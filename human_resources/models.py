@@ -208,11 +208,11 @@ class Nomina(models.Model):
 
 
 def set_up_nomina(sender, instance, **kwargs):
-    active_employees = list(Employee.objects.filter(active=True))
-    print(active_employees)
-    for employee in active_employees:
-        instance.employees.add(employee)
-        Comprobante.objects.create(nomina=instance, employee=employee)
+    if instance.employees.exists() is not True:
+        active_employees = list(Employee.objects.filter(active=True))
+        for employee in active_employees:
+            instance.employees.add(employee)
+            Comprobante.objects.create(nomina=instance, employee=employee)
 
 
 post_save.connect(set_up_nomina, sender=Nomina)

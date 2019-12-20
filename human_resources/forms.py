@@ -48,7 +48,7 @@ class ComprobanteForm(ModelForm):
 
 ComprobanteFormSet = inlineformset_factory(
     Nomina, Comprobante, form=ComprobanteForm,
-    fields=['employee', 'normal_hours', 'extra_hours', 'feriado_hours'], extra=1, can_delete=True
+    fields=['employee', 'normal_hours', 'extra_hours', 'feriado_hours'], extra=0, can_delete=True
 )
 
 
