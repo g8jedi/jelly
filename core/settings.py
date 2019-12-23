@@ -136,3 +136,13 @@ STATIC_URL = '/static/'
 
 SITE_ID = 1
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+# Sendgrid Config
+
+SEND_GRID_API_KEY = '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'
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_HOST_USER = 'apikey'
+EMAIL_HOST_PASSWORD = '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'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

@@ -12,4 +12,6 @@ urlpatterns = [
     path('create-nomina/', views.CreateNominaView.as_view(), name='create-nomina'),
     path('comprobante-submit/<int:pk>/', views.ComprobanteSubmit.as_view(), name='comprobante-submit'),  # Create Nomina & add Comprobantes
     path('nomina/<int:pk>/', views.NominaDetailView.as_view(), name='nomina-detail'),
+
+    path('email/', views.send_email),
 ]
