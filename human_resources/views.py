@@ -107,7 +107,6 @@ def email_comprobantes(request, pk):
     nomina = Nomina.objects.get(id=pk)
     comprobantes = nomina.comprobante_set.all()
     messages = get_comprobante_emails(comprobantes=comprobantes)
-    print(messages)
     connection = get_connection()
     connection.send_messages(messages)
 
