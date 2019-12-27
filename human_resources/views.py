@@ -87,16 +87,16 @@ def create_pdf(comprobante_id):
     return result
 
 
-def send_email(request):
+def email_comprobantes(request, pk):
     """Email Send Test"""
-    nomina = Nomina.objects.get(id=41)
+    nomina = Nomina.objects.get(id=pk)
     comprobantes = nomina.comprobante_set.all()
     for comprobante in comprobantes:
         subject = 'Tacomoe: Comporbante De Pago'
         email_message = render_to_string('human_resources/comprobante_email_message.html', {'comprobante': comprobante})
         email = EmailMessage(
             subject, email_message, settings.DEFAULT_FROM_EMAIL,
-            ['jairo.batista21@gmail.com', 'giannabeato8@gmail.com']
+            ['jairo.batista21@gmail.com', comprobante.employee.email]
         )
 
         attatchment = create_pdf(comprobante_id=comprobante.id)

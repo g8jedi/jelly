@@ -10,7 +10,9 @@
 </nav>
 {% endblock %}
 {% block content %}
-	<h1>{{ nomina.pay_period_start }} - {{ nomina.pay_period_end }}</h1>
+<div class="float-md-right">
+	<h4>Nomina Period: {{ nomina.pay_period_start }} - {{ nomina.pay_period_end }}<h4>
+</div>
 <table class="table table-striped table-sm">
 	<thead class="thead-light">
    	 <tr>
@@ -63,5 +65,11 @@
     {% endfor %}
 
 </table>
+<form action="{% url 'human_resources:email-comprobantes' nomina.id %}" method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary">Email Comprobantes</button>
+</form>
+
+<br>
 
 {% endblock %}
