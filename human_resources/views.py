@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from django.conf import settings
-from django.core.mail import send_mail, EmailMessage
+from django.core.mail import get_connection, EmailMessage
 from django.db import transaction
 from django.forms import formset_factory
 from django.template.loader import render_to_string
@@ -87,12 +87,10 @@ def create_pdf(comprobante_id):
     return result
 
 
-def email_comprobantes(request, pk):
-    """Email Send Test"""
-    nomina = Nomina.objects.get(id=pk)
-    comprobantes = nomina.comprobante_set.all()
+def get_comprobante_emails(comprobantes):
+    messages = list()
     for comprobante in comprobantes:
-        subject = 'Tacomoe: Comporbante De Pago'
+        subject = 'Tacomoe: Comprobante De Pago'
         email_message = render_to_string('human_resources/comprobante_email_message.html', {'comprobante': comprobante})
         email = EmailMessage(
             subject, email_message, settings.DEFAULT_FROM_EMAIL,
@@ -101,6 +99,16 @@ def email_comprobantes(request, pk):
 
         attatchment = create_pdf(comprobante_id=comprobante.id)
         email.attach("comprobante-tacomoe-{}.pdf".format(comprobante.id), attatchment)
-        email.send()
+        messages.append(email)
+    return messages
+
+
+def email_comprobantes(request, pk):
+    nomina = Nomina.objects.get(id=pk)
+    comprobantes = nomina.comprobante_set.all()
+    messages = get_comprobante_emails(comprobantes=comprobantes)
+    print(messages)
+    connection = get_connection()
+    connection.send_messages(messages)
 
     return render(request, 'human_resources/base.html')
