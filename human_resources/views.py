@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.mail import send_mail, EmailMessage
 from django.db import transaction
 from django.forms import formset_factory
-from django.template.loader import get_template, render_to_string
+from django.template.loader import render_to_string
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import generic
@@ -81,7 +81,7 @@ class ComprobanteSubmit(generic.UpdateView):
 
 def create_pdf(comprobante_id):
     comprobante = Comprobante.objects.get(id=comprobante_id)
-    html_string = render_to_string('human_resources/ticket.html', {'comprobante': comprobante})
+    html_string = render_to_string('human_resources/comprobante_pdf.html', {'comprobante': comprobante})
     html = HTML(string=html_string)
     result = html.write_pdf()
     return result
@@ -89,18 +89,18 @@ def create_pdf(comprobante_id):
 
 def send_email(request):
     """Email Send Test"""
-    nomina = Nomina.objects.get(id=40)
+    nomina = Nomina.objects.get(id=41)
     comprobantes = nomina.comprobante_set.all()
     for comprobante in comprobantes:
+        subject = 'Tacomoe: Comporbante De Pago'
+        email_message = render_to_string('human_resources/comprobante_email_message.html', {'comprobante': comprobante})
         email = EmailMessage(
-            'Hello {{ comprobante.employee.full_name}}',
-            'Attatched is your comprobante for the corresponding payperiod {{ nomina.pay_period_start }} - {{ nomina.pay_period.end}}',
-            settings.DEFAULT_FROM_EMAIL,
-            ['jairo.batista21@gmail.com', 'gianna.beato@tacomoe.com']
+            subject, email_message, settings.DEFAULT_FROM_EMAIL,
+            ['jairo.batista21@gmail.com', 'giannabeato8@gmail.com']
         )
 
         attatchment = create_pdf(comprobante_id=comprobante.id)
-        email.attach("comprobante.pdf", attatchment)
+        email.attach("comprobante-tacomoe-{}.pdf".format(comprobante.id), attatchment)
         email.send()
 
     return render(request, 'human_resources/base.html')
