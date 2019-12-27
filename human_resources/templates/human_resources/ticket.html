@@ -1,0 +1,202 @@
+<!doctype html>
+{% load staticfiles %}
+{% load humanize %}
+
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Board ticket</title>
+    <meta name="description" content="Board ticket">
+    <style>
+      @charset "UTF-8";
+      @page {
+        margin: 3cm;
+        @bottom-left {
+          color: #a9a;
+          font-size: 9pt;
+          content: '{{ comprobante.nomina.pay_period_start|date:"d/M/Y" }} - {{ comprobante.nomina.pay_period_end|date:"d/M/Y" }}'; }
+        @bottom-right {
+          color: #a9a;
+          content: 'bebaza.com.do';
+          font-size: 9pt; } }
+
+      html {
+        color: #14213d;
+        font-family: Source Sans Pro;
+        font-size: 11pt;
+        line-height: 1.6; }
+        html body {
+          margin: 0; }
+        html aside {
+          display: flex;
+          margin: 2em 0 4em; }
+          html aside address {
+            font-style: normal;
+            white-space: pre-line; }
+            html aside address#from {
+              flex: 1; }
+            html aside address#to {
+              text-align: right; }
+        html dl {
+          text-align: right;
+          position: absolute;
+          right: 0;
+          top: 0; }
+          html dl dt, html dl dd {
+            display: inline;
+            margin: 0; }
+          html dl dt {
+            color: #a9a; }
+            html dl dt::before {
+              content: '';
+              display: block; }
+            html dl dt::after {
+              content: ':'; }
+        html table {
+          border-collapse: collapse;
+          width: 100%; }
+          html table th {
+            border-bottom: .2mm solid #a9a;
+            color: #a9a;
+            font-size: 10pt;
+            font-weight: 400;
+            padding-bottom: .25cm;
+            text-transform: uppercase; }
+          html table td {
+            padding-top: 7mm; }
+            html table td:last-of-type {
+              font-weight: bold;
+              text-align: right; }
+          html table th, html table td {
+            text-align: center; }
+            html table th:first-of-type, html table td:first-of-type {
+              text-align: left; }
+            html table th:last-of-type, html table td:last-of-type {
+              text-align: right; }
+          html table#total {
+            background: #f6f6f6;
+            border-color: #f6f6f6;
+            border-style: solid;
+            border-width: 1cm 3cm;
+            bottom: 0;
+            font-size: 13pt;
+            margin: 0 -3cm;
+            position: absolute;
+            width: 18cm; }
+    </style>
+
+
+  </head>
+
+  <body>
+    <h3>Comprobante De Pago</h3>
+    <aside>
+      <address id="from">
+      {{ comprobante.employee.full_name }}
+      {{ comprobante.employee.identification }}
+      </address>
+
+      <address id="to">
+      Período de Pago:
+      {{ comprobante.nomina.pay_period_start|date:"d/M" }} - {{ comprobante.nomina.pay_period_end|date:"d/M" }}
+      Comprobante ID: {{ comprobante.id }}
+      </address>
+    </aside>
+
+    <dl id="informations">
+      Tacomoe S.R.L.
+      <br>
+      RNC: 131871552
+    </dl>
+
+    <table>
+      <thead>
+        <th scope="col">INGRESO</th>
+            <th scope="col">METODO</th>
+            <th scope="col">TARIFA</th>
+            <th scope="col">HORAS</th>
+            <th scope="col">TOTAL</th>
+      </thead>
+      <tbody>
+        <tr>
+            <td scope="col-md-1">Quincena</td>
+            {% if comprobante.employee.payment_method == "SALARIO" %}
+              <td scope="col-md-2">{{ comprobante.employee.payment_method|lower }}</td>
+              <td scope="col-md-3">{{ comprobante.employee.salary}}</td>
+              <td scope="col-md-4">N/A</td>
+              <td scope="col-md-5">{{ comprobante.quincena|intcomma }}</td>
+            {% else %}
+              <td scope="col-md-2">{{ comprobante.employee.payment_method|lower }}</td>
+              <td scope="col-md-3">{{ comprobante.employee.hourly}}</td>
+              <td scope="col-md-4">{{ comprobante.normal_hours }}</td>
+              <td scope="col-md-4">{{ comprobante.taxable_income|intcomma }}</td>
+            {% endif %}
+          </tr>
+        {% if comprobante.extra_hours > 0 %}
+          <tr>
+            <td scope="row">Horas Extras</td>
+            <td scope="row">por hora</td>
+            <td scope="row">{{ comprobante.extra_hours_hourly }}</td>
+            <td scope="row">{{ comprobante.extra_hours }}</td>
+            <td scope="row">{{ comprobante.extra_hours_income|intcomma }}</td>
+          </tr>
+          {% endif %}
+          {% if comprobante.feriado_hours > 0 %}
+          <tr>
+            <td scope="row">Horas Feriados</td>
+            <td scope="row">por hora</td>
+            <td scope="row">{{ comprobante.feriado_hours_hourly }}</td>
+            <td scope="row">{{ comprobante.feriado_hours }}</td>
+            <td scope="row">{{ comprobante.feriado_hours_income|intcomma }}</td>
+          </tr>
+          {% endif %}
+      </tbody>
+    </table>
+    <br>
+  {% if comprobante.employee.nationality == "DOMINICAN" %}
+    <table>
+      <thead class="thead-light">
+          <tr>
+            <th scope="col">DEDUCCIONES</th>
+            <th scope="col">%</th>
+            <th scope="col">TOTAL</th>
+          </tr>
+      </thead>
+        <tbody>
+          <tr>
+            <td class="col-md-1">Seguro Familiar de Salud</td>
+            <td class="col-md-2">3.04%</td>
+            <td class="col-md-3">{{ comprobante.SFS_employee_deduction|intcomma }}</td>
+          </tr>
+          <tr>
+            <td class="col-md-1">Fondo de Pensiones</td>
+            <td class="col-md-2">2.87%</td>
+            <td class="col-md-3">{{ comprobante.AFP_employee_deduction|intcomma }}</td>
+          </tr>
+        </tbody>
+    </table>
+  {% else %}
+  {% endif %}
+    <table id="total">
+      <thead>
+        <th>RESUMEN DE PAGO</th>
+        <th>TOTAL</th>
+      </thead>
+      <tbody>
+        <tr>
+          <td><b>Ingreso Total</b></td>
+          <td>{{ comprobante.gross|intcomma }}</td>
+        </tr>
+        <tr>
+          <td><b>Deducciones Total</b></td>
+          <td>{{ comprobante.total_employee_deductions|intcomma }}</td>
+        </tr>
+        <tr>
+          <td><b>Pago Neto</b></td>
+          <td>{{ comprobante.netpay|intcomma }}</td>
+        </tr>
+      </tbody>
+    </table>
+</body>
+</html>

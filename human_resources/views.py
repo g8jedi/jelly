@@ -1,11 +1,15 @@
+from datetime import datetime
+
 from django.conf import settings
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
 from django.db import transaction
 from django.forms import formset_factory
-from django.template.loader import get_template
+from django.template.loader import get_template, render_to_string
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import generic
+
+from weasyprint import HTML
 
 from .models import Employee, Comprobante, Nomina
 from .forms import EmployeeForm, NominaForm, ComprobanteForm, ComprobanteFormSet
@@ -75,13 +79,28 @@ class ComprobanteSubmit(generic.UpdateView):
         return reverse_lazy('human_resources:nomina-detail', kwargs={'pk': self.object.pk})
 
 
+def create_pdf(comprobante_id):
+    comprobante = Comprobante.objects.get(id=comprobante_id)
+    html_string = render_to_string('human_resources/ticket.html', {'comprobante': comprobante})
+    html = HTML(string=html_string)
+    result = html.write_pdf()
+    return result
+
+
 def send_email(request):
     """Email Send Test"""
-    subject = "Email Received"
-    from_email = settings.DEFAULT_FROM_EMAIL
-    to_email = ['jairo.batista21@gmail.com']
-    contact_message = "Hello World!"
+    nomina = Nomina.objects.get(id=40)
+    comprobantes = nomina.comprobante_set.all()
+    for comprobante in comprobantes:
+        email = EmailMessage(
+            'Hello {{ comprobante.employee.full_name}}',
+            'Attatched is your comprobante for the corresponding payperiod {{ nomina.pay_period_start }} - {{ nomina.pay_period.end}}',
+            settings.DEFAULT_FROM_EMAIL,
+            ['jairo.batista21@gmail.com', 'gianna.beato@tacomoe.com']
+        )
 
-    send_mail(subject, contact_message, from_email, to_email, fail_silently=False)
+        attatchment = create_pdf(comprobante_id=comprobante.id)
+        email.attach("comprobante.pdf", attatchment)
+        email.send()
 
     return render(request, 'human_resources/base.html')
