@@ -2,6 +2,18 @@ from django.contrib import admin
 
 from .models import Employee, Comprobante, Nomina
 
-admin.site.register(Employee)
 admin.site.register(Comprobante)
-admin.site.register(Nomina)
+
+
+class EmployeeAdmin(admin.ModelAdmin):
+    list_display = ('full_name', 'active', 'payment_method', 'email', 'salary', 'hourly')
+    list_filter = ('active', 'nationality', 'payment_method')
+    search_fields = ('surname', 'middle_name', 'forename')
+
+
+class NominaAdmin(admin.ModelAdmin):
+    list_display = ('id', 'pay_period')
+
+
+admin.site.register(Nomina, NominaAdmin)
+admin.site.register(Employee, EmployeeAdmin)
