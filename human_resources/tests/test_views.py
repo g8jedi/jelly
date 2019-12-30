@@ -172,7 +172,7 @@ class NominaFormViewTests(TestCase):
         """
         Test if Nomina form 200
         """
-        url = reverse('human_resources:start-nomina')
+        url = reverse('human_resources:create-nomina')
         response = self.client.get(url)
 
         # Test attribute descriptions appear
