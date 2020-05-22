@@ -13,7 +13,8 @@
 <div class="float-md-right">
 	<h4>Nomina Period: {{ nomina.pay_period_start }} - {{ nomina.pay_period_end }}<h4>
 </div>
-<table class="table table-striped table-sm">
+<div class="table-responsive">
+<table class="table table-sm table-bordered table-hover">
 	<thead class="thead-light">
    	 <tr>
       <th scope="col">EMPLOYEE</th>
@@ -30,6 +31,11 @@
 	  <th scope="col">SFS</th>
 	  <th scope="col">AFP</th>
 	  <th scope="col">MONTO NETO</th>
+	  <th scope="col">SFS</th>
+	  <th scope="col">AFP</th>
+	  <th scope="col">SRL</th>
+	  <th scope="col">INFOTEP</th>
+	  <th scope="col">Pago Empresa</th>
    	 </tr>
   	</thead>
     {% for comprobante in nomina.comprobante_set.all %}
@@ -61,10 +67,27 @@
 				<td>{{ comprobante.SFS_employee_deduction|default:"--" }}</td>
 				<td>{{ comprobante.AFP_employee_deduction|default:"--" }}</td>
 				<td>{{ comprobante.netpay|default:"--" }}</td>
+				<td>{{ comprobante.SFS_employer_liability|default:"--" }}</td>
+				<td>{{ comprobante.AFP_employer_liability|default:"--" }}</td>
+				<td>{{ comprobante.SRL_employer_liability|default:"--" }}</td>
+				<td>{{ comprobante.INFOTEP_employer_liability|default:"--" }}</td>
+				<td></td>
             </tr>
     {% endfor %}
+	<tfoot>
+		<tr>
+			<th colspan="13">TOTAL</th>
+			<th>{{ nomina.total_netpay }}</th>
+			<th></th>
+			<th></th>
+			<th></th>
+			<th></th>
+			<th></th>
+		</tr>
+	</tfoot>
 
 </table>
+</div>
 <form action="{% url 'human_resources:email-comprobantes' nomina.id %}" method="post">
     {% csrf_token %}
     <button type="submit" class="btn btn-primary">Email Comprobantes</button>

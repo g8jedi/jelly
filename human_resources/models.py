@@ -158,25 +158,25 @@ class Comprobante(models.Model):
 
     def SRL_employer_liability(self):
         if self.employee.nationality == "DOMINICAN":
-            return round((self.taxable_income() * Rule.SRL_EMPLOYER_LIABILITY), 2)
+            return round((self.taxable_income() * Rule.SRL_EMPLOYER_LIABILITY), 0)
         else:
             return "N/A"
 
     def AFP_employer_liability(self):
         if self.employee.nationality == "DOMINICAN":
-            return self.taxable_income() * Rule.AFP_EMPLOYER_LIABILITY
+            return round((self.taxable_income() * Rule.AFP_EMPLOYER_LIABILITY), 0)
         else:
             return "N/A"
 
     def SFS_employer_liability(self):
         if self.employee.nationality == "DOMINICAN":
-            return self.taxable_income() * self.SFS_EMPLOYER_LIABILITY
+            return round((self.taxable_income() * Rule.SFS_EMPLOYER_LIABILITY), 0)
         else:
             return "N/A"
 
     def INFOTEP_employer_liability(self):
         if self.employee.nationality == "DOMINICAN":
-            return self.taxable_income() * Rule.INFOTEP_EMPLOYER_LIABILITY
+            return round((self.taxable_income() * Rule.INFOTEP_EMPLOYER_LIABILITY), 0)
         else:
             return "N/A"
 
@@ -205,6 +205,19 @@ class Nomina(models.Model):
     pay_period_start = models.DateField()
     pay_period_end = models.DateField()
     employees = models.ManyToManyField(Employee, limit_choices_to={'active': True})
+
+    def pay_period(self):
+        return "{} - {}".format(self.pay_period_start, self.pay_period_end)
+
+    def __str__(self):
+        return self.pay_period()
+
+    def total_netpay(self):
+        netpay = Decimal()
+        comprobantes = self.comprobante_set.all()
+        for comprobante in comprobantes:
+            netpay += comprobante.netpay()
+        return netpay
 
 
 def set_up_nomina(sender, instance, **kwargs):

@@ -6,7 +6,7 @@ admin.site.register(Comprobante)
 
 
 class EmployeeAdmin(admin.ModelAdmin):
-    list_display = ('full_name', 'active', 'payment_method', 'email', 'salary', 'hourly')
+    list_display = ('full_name', 'nationality', 'active', 'hire_date', 'email', 'identification')
     list_filter = ('active', 'nationality', 'payment_method')
     search_fields = ('surname', 'middle_name', 'forename')
 

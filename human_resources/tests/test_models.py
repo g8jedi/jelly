@@ -283,3 +283,36 @@ class NominaModelTest(TestCase):
 
         self.assertEqual(nomina.pay_period_start, pay_period_start)
         self.assertEqual(nomina.pay_period_end, pay_period_end)
+
+    def test_nomina_total_methods(self):
+        pay_period_start = datetime.now()
+        pay_period_end = datetime.now()
+        nomina = Nomina.objects.create(pay_period_start=datetime.now(), pay_period_end=datetime.now())
+
+        # Employee Setup
+        nationality = "DOMINICAN"
+        hourly = randint(56, 100)
+        payment_method = "POR HORA"
+        normal_hours = randint(50, 88)
+        extra_hours = randint(1, 25)
+        feriado_hours = randint(3, 35)
+
+        employee = Employee.objects.create(
+            forename="Jairo", surname="Batista", identification="235214214tewf",
+            hire_date=datetime.now(), date_of_birth=datetime.now(),
+            payment_method=payment_method, nationality=nationality,
+            gender="MALE", hourly=hourly
+        )
+
+        comprobante1 = Comprobante.objects.create(
+            employee=employee, nomina=nomina, extra_hours=extra_hours, feriado_hours=feriado_hours
+        )
+
+        comprobante2 = Comprobante.objects.create(
+            employee=employee, nomina=nomina,
+            extra_hours=extra_hours, feriado_hours=feriado_hours, normal_hours=normal_hours
+        )
+
+        total_netpay = comprobante1.netpay() + comprobante2.netpay()
+
+        self.assertEqual(nomina.total_netpay(), total_netpay)
